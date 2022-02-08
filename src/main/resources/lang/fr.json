@@ -1,0 +1,11 @@
+{
+  "blue.display": "&1Bleu",
+  "red.display": "&4Rouge",
+  "item.lasergun": "&4Pistolet Laser",
+  "player.death.title": "&4Vous êtes mort",
+  "player.death.subtitle": "&cVous pourrez tirer dans %ss",
+  "player.death.subtitle.good": "&aVous pouvez tirer",
+  "scoreboard.kills.display": "Eliminations: ",
+  "scoreboard.deaths.display": "Morts: ",
+  "scoreboard.time.display": "Timer: "
+}

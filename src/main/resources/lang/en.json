@@ -1,0 +1,11 @@
+{
+  "blue.display": "&1Blue",
+  "red.display": "&4Red",
+  "item.lasergun": "&4Laser Gun",
+  "player.death.title": "&4You are dead",
+  "player.death.subtitle": "&cYou will be able to shoot in %ss",
+  "player.death.subtitle.good": "&aYou are able to shoot",
+  "scoreboard.kills.display": "Kills: ",
+  "scoreboard.deaths.display": "Deaths: ",
+  "scoreboard.time.display": "Timer: "
+}
