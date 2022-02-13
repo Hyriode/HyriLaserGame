@@ -1,11 +1,45 @@
 {
-  "blue.display": "&1Bleu",
-  "red.display": "&4Rouge",
+  "blue.display": "Bleu",
+  "red.display": "Rouge",
+
   "item.lasergun": "&4Pistolet Laser",
+
   "player.death.title": "&4Vous êtes mort",
   "player.death.subtitle": "&cVous pourrez tirer dans %ss",
   "player.death.subtitle.good": "&aVous pouvez tirer",
+  "player.death.chat": "%s a été touché",
+
   "scoreboard.kills.display": "Eliminations: ",
   "scoreboard.deaths.display": "Morts: ",
-  "scoreboard.time.display": "Timer: "
+  "scoreboard.winner.display": "Gagnant: ",
+  "scoreboard.looser.display": "Perdant: ",
+  "scoreboard.time.display": "Timer: ",
+  "scoreboard.suddendeath.display": "Mort subite",
+
+  "map.title.victory": "VICTOIRE",
+  "map.title.defeat": "DEFAITE",
+  "map.player.title": "Vous",
+  "map.player.deaths": "Morts",
+  "map.player.kills": "Eliminations",
+
+  "game.suddendeath.title": "Mort Subite",
+  "game.suddendeath.subtitle": "Tue (ou meurt) pour terminer la party",
+
+  "bonus.invisibility.name": "&7Invisibilité",
+  "bonus.inversion.name": "&cInversion",
+  "bonus.shoot_faster.name": "&4Tir Rapide",
+  "bonus.speed.name": "&bRapidité",
+  "bonus.shield.name": "&3Bouclier",
+  "bonus.invisibility.description": "Vous êtes invisible pendant 10s",
+  "bonus.inversion.description": "Vous avez l'apparence de la team advairse",
+  "bonus.shoot_faster.description": "Vous tirez plus rapidement",
+  "bonus.speed.description": "Vous êtes plus rapide pendant 10s",
+  "bonus.shield.description": "Vous êtes invincible pendant 5s",
+  "bonus.pickup.title": "Tu as reçu",
+  "bonus.pickup.description": "Description: ",
+  "bonus.pickup.already": "Tu as déjà un bonus !",
+
+  "damage.death.shield_fell": "Votre bouclié s'est cassé (Vous avez pris un dégat de chute)",
+  "damage.death.fell": "+1 Mort (Vous êtes tombé)"
+
 }

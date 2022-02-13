@@ -7,15 +7,21 @@ import fr.hyriode.lasergame.game.HyriLGGameTeam;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class HyriLGConfiguration implements IHyriConfiguration {
 
     private static final Supplier<Location> DEFAULT_LOCATION = () -> new Location(HyriLaserGame.WORLD.get(), 0, 100, 0);
 
     private final Map<HyriLGGameTeam, Team> teams = new HashMap<>();
+
+    private List<Location> bonusLocation;
+    private final ListEntry bonusLocationEntry;
 
     private Location spawnLocation;
     private final LocationEntry spawnLocationEntry;
@@ -25,6 +31,9 @@ public class HyriLGConfiguration implements IHyriConfiguration {
 
     private boolean friendlyFire;
     private final BooleanEntry friendlyFireEntry;
+
+    private int timeSecond;
+    private final IntegerEntry timeSecondEntry;
 
     private final HyriLaserGame plugin;
     private final FileConfiguration config;
@@ -36,11 +45,17 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         this.spawnLocation = DEFAULT_LOCATION.get();
         this.spawnLocationEntry = new LocationEntry("spawn-location", config);
 
-        this.laserRange = 20D;
+        this.laserRange = 20;
         this.laserRangeEntry = new DoubleEntry("laser-range", config);
 
         this.friendlyFire = false;
         this.friendlyFireEntry = new BooleanEntry("friendly-fire", config);
+
+        this.bonusLocation = new ArrayList<>();
+        this.bonusLocationEntry = new ListEntry("location-bonus", config);
+
+        this.timeSecond = 600;
+        this.timeSecondEntry = new IntegerEntry("time-second", config);
     }
 
     @Override
@@ -53,6 +68,10 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         this.spawnLocationEntry.setDefault(DEFAULT_LOCATION.get());
         this.laserRangeEntry.setDefault(20D);
         this.friendlyFireEntry.setDefault(false);
+        List<Location> locations = new ArrayList<>();
+        locations.add(DEFAULT_LOCATION.get());
+        this.bonusLocationEntry.setDefault(locations);
+        this.timeSecondEntry.setDefault(600);
         this.plugin.saveConfig();
     }
 
@@ -66,6 +85,8 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         this.spawnLocation = spawnLocationEntry.get();
         this.laserRange = laserRangeEntry.get();
         this.friendlyFire = friendlyFireEntry.get();
+        this.bonusLocation = bonusLocationEntry.get().stream().map(o -> (Location)o).collect(Collectors.toList());
+        this.timeSecond = timeSecondEntry.get();
     }
 
     @Override
@@ -74,6 +95,8 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         this.spawnLocationEntry.set(this.spawnLocation);
         this.laserRangeEntry.set(this.laserRange);
         this.friendlyFireEntry.set(this.friendlyFire);
+        this.bonusLocationEntry.set(this.bonusLocation);
+        this.timeSecondEntry.set(this.timeSecond);
         this.plugin.saveConfig();
     }
 
@@ -96,6 +119,14 @@ public class HyriLGConfiguration implements IHyriConfiguration {
 
     public Location getSpawnLocation() {
         return spawnLocation;
+    }
+
+    public List<Location> getBonusLocation() {
+        return bonusLocation;
+    }
+
+    public int getTimeSecond() {
+        return timeSecond;
     }
 
     public class Team implements IHyriConfiguration {
