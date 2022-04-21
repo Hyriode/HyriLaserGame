@@ -5,6 +5,7 @@ import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
+import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
@@ -23,6 +24,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -68,7 +70,7 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         this.giveDeathArmor();
         this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * timeDeath, 1, true, true));
-        this.setDead(true);
+        this.setDead(HyriGameDeathEvent.Reason.PLAYERS, new ArrayList<>());
 
         final HyriLanguageMessage dead = new HyriLanguageMessage("")
                 .addValue(HyriLanguage.EN, "DEAD")
@@ -95,7 +97,7 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             if(this.game.getState() != HyriGameState.ENDED) {
-                this.setDead(false);
+                this.setNotDead();
                 this.playReviveSound(player);
                 this.giveArmor();
             }
