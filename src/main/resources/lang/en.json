@@ -4,7 +4,7 @@
 
   "item.lasergun": "&4Laser Gun",
 
-  "player.death.title": "&4You are dead",
+  "player.death.title": "&cYou are dead!",
   "player.death.subtitle": "&cYou will be able to shoot in %ss",
   "player.death.subtitle.good": "&aYou are able to shoot",
   "player.death.chat": "%s was hit",
@@ -15,30 +15,39 @@
   "scoreboard.looser.display": "Looser: ",
   "scoreboard.time.display": "Timer: ",
   "scoreboard.suddendeath.display": "Sudden Death",
+  "scoreboard.points.display": "Points",
+  "scoreboard.bonus.display": "Bonus",
+  "scoreboard.team.display": "Team",
 
   "map.title.victory": "VICTORY",
   "map.title.defeat": "DEFEAT",
   "map.player.title": "You",
   "map.player.deaths": "Deaths",
   "map.player.kills": "Kills",
+  "map.name": "Result",
 
   "game.suddendeath.title": "Sudden Death",
   "game.suddendeath.subtitle": "Kill (or dead) for finish the game",
 
-  "bonus.invisibility.name": "&7Invisibility",
-  "bonus.inversion.name": "&cInversion",
-  "bonus.shoot_faster.name": "&4Shoot Faster",
-  "bonus.speed.name": "&bSpeed",
-  "bonus.shield.name": "&3Shield",
-  "bonus.invisibility.description": "You are invisible during 10s",
+  "bonus.invisibility.name": "Invisibility",
+  "bonus.inversion.name": "Inversion",
+  "bonus.shoot_faster.name": "Shoot Faster",
+  "bonus.speed.name": "Speed",
+  "bonus.shield.name": "Shield",
+  "bonus.invisibility.description": "You are invisible during 5s",
   "bonus.inversion.description": "You have the appearance of the opposing team",
   "bonus.shoot_faster.description": "You can shoot faster",
-  "bonus.speed.description": "You are faster during 10s",
+  "bonus.speed.description": "You are faster for 10s",
   "bonus.shield.description": "You are invincible during 5s",
-  "bonus.pickup.title": "You received",
+  "bonus.pickup.title": "You received:",
   "bonus.pickup.description": "Description: ",
-  "bonus.pickup.already": "You already have a bonus !",
+  "bonus.pickup.already": "You already have a bonus!",
+
+  "bonus.unknown": "Unknown",
 
   "damage.death.shield_fell": "Your shield is broken (You fell)",
-  "damage.death.fell": "+1 Death (You fell)"
+  "damage.death.fell": "+1 Death (You fell)",
+
+  "game.timer.can-shoot": "You can shoot in",
+  "game.starting-in": "Starting in"
 }

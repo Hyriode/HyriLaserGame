@@ -3,22 +3,23 @@ package fr.hyriode.lasergame.configuration;
 import fr.hyriode.hyrame.configuration.HyriConfigurationEntry.*;
 import fr.hyriode.hyrame.configuration.IHyriConfiguration;
 import fr.hyriode.lasergame.HyriLaserGame;
-import fr.hyriode.lasergame.game.HyriLGGameTeam;
+import fr.hyriode.lasergame.game.LGGameTeam;
+import fr.hyriode.lasergame.game.LGGameType;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class HyriLGConfiguration implements IHyriConfiguration {
+public class LGConfiguration implements IHyriConfiguration {
 
     private static final Supplier<Location> DEFAULT_LOCATION = () -> new Location(HyriLaserGame.WORLD.get(), 0, 100, 0);
 
-    private final Map<HyriLGGameTeam, Team> teams = new HashMap<>();
+    private LGGameType gameType;
+    private final StringEntry gameTypeEntry;
+
+    private final Map<LGGameTeam, Team> teams = new HashMap<>();
 
     private List<Location> bonusLocation;
     private final ListEntry bonusLocationEntry;
@@ -38,50 +39,53 @@ public class HyriLGConfiguration implements IHyriConfiguration {
     private final HyriLaserGame plugin;
     private final FileConfiguration config;
 
-    public HyriLGConfiguration(HyriLaserGame plugin){
+    public LGConfiguration(HyriLaserGame plugin){
         this.plugin = plugin;
         this.config = plugin.getConfig();
 
+        this.gameType = LGGameType.SQUAD;
+        this.gameTypeEntry = new StringEntry("game-type", this.config);
+
         this.spawnLocation = DEFAULT_LOCATION.get();
-        this.spawnLocationEntry = new LocationEntry("spawn-location", config);
+        this.spawnLocationEntry = new LocationEntry("spawn-location", this.config);
 
         this.laserRange = 20;
-        this.laserRangeEntry = new DoubleEntry("laser-range", config);
+        this.laserRangeEntry = new DoubleEntry("laser-range", this.config);
 
         this.friendlyFire = false;
-        this.friendlyFireEntry = new BooleanEntry("friendly-fire", config);
+        this.friendlyFireEntry = new BooleanEntry("friendly-fire", this.config);
 
         this.bonusLocation = new ArrayList<>();
-        this.bonusLocationEntry = new ListEntry("location-bonus", config);
+        this.bonusLocationEntry = new ListEntry("location-bonus", this.config);
 
         this.timeSecond = 600;
-        this.timeSecondEntry = new IntegerEntry("time-second", config);
+        this.timeSecondEntry = new IntegerEntry("time-second", this.config);
     }
 
     @Override
     public void create() {
-        for(HyriLGGameTeam team : HyriLGGameTeam.values()){
+        for(LGGameTeam team : LGGameTeam.values()){
             final Team teamConfig = new Team(team.getName());
             teamConfig.create();
             this.teams.put(team, teamConfig);
         }
-        this.spawnLocationEntry.setDefault(DEFAULT_LOCATION.get());
-        this.laserRangeEntry.setDefault(20D);
-        this.friendlyFireEntry.setDefault(false);
-        List<Location> locations = new ArrayList<>();
-        locations.add(DEFAULT_LOCATION.get());
-        this.bonusLocationEntry.setDefault(locations);
-        this.timeSecondEntry.setDefault(600);
+        this.gameTypeEntry.setDefault(this.gameType.name());
+        this.spawnLocationEntry.setDefault(this.spawnLocation);
+        this.laserRangeEntry.setDefault(this.laserRange);
+        this.friendlyFireEntry.setDefault(this.friendlyFire);
+        this.bonusLocationEntry.setDefault(this.bonusLocation);
+        this.timeSecondEntry.setDefault(this.timeSecond);
         this.plugin.saveConfig();
     }
 
     @Override
     public void load() {
-        for(HyriLGGameTeam team : HyriLGGameTeam.values()){
+        for(LGGameTeam team : LGGameTeam.values()){
             final Team teamConfig = new Team(team.getName());
             teamConfig.load();
             this.teams.put(team, teamConfig);
         }
+        this.gameType = LGGameType.valueOf(gameTypeEntry.get().toUpperCase());
         this.spawnLocation = spawnLocationEntry.get();
         this.laserRange = laserRangeEntry.get();
         this.friendlyFire = friendlyFireEntry.get();
@@ -92,6 +96,7 @@ public class HyriLGConfiguration implements IHyriConfiguration {
     @Override
     public void save() {
         this.teams.forEach((gameTeam, team) -> team.save());
+        this.gameTypeEntry.set(this.gameType.name());
         this.spawnLocationEntry.set(this.spawnLocation);
         this.laserRangeEntry.set(this.laserRange);
         this.friendlyFireEntry.set(this.friendlyFire);
@@ -105,37 +110,50 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         return this.config;
     }
 
-    public Map<HyriLGGameTeam, Team> getTeams() {
-        return teams;
+    public LGGameType getGameType() {
+        return this.gameType;
+    }
+
+    public Map<LGGameTeam, Team> getTeams() {
+        return this.teams;
     }
 
     public double getLaserRange() {
-        return laserRange;
+        return this.laserRange;
     }
 
     public boolean isFriendlyFire() {
-        return friendlyFire;
+        return this.friendlyFire;
     }
 
     public Location getSpawnLocation() {
-        return spawnLocation;
+        return this.spawnLocation;
     }
 
     public List<Location> getBonusLocation() {
-        return bonusLocation;
+        return this.bonusLocation;
     }
 
     public int getTimeSecond() {
-        return timeSecond;
+        return this.timeSecond;
     }
 
     public class Team implements IHyriConfiguration {
 
-        private Location firstPointDoor;
-        private final LocationEntry firstPointDoorEntry;
+//        private List<Door> doors;
+//        private final ListEntry doorsEntry;
 
-        private Location secondPointDoor;
-        private final LocationEntry secondPointDoorEntry;
+        private Location firstPointFirstDoor;
+        private final LocationEntry firstPointFirstDoorEntry;
+
+        private Location secondPointFirstDoor;
+        private final LocationEntry secondPointFirstDoorEntry;
+
+        private Location firstPointSecondDoor;
+        private final LocationEntry firstPointSecondDoorEntry;
+
+        private Location secondPointSecondDoor;
+        private final LocationEntry secondPointSecondDoorEntry;
 
         private Location firstPointSpawn;
         private final LocationEntry firstPointSpawnEntry;
@@ -154,13 +172,23 @@ public class HyriLGConfiguration implements IHyriConfiguration {
 
             final String spawnKey = key + "spawn.";
             final String spawnAreaKey = key + "spawnarea.";
-            final String doorKey = key + "door.";
+            final String doorKey = key + "doors.";
 
-            this.firstPointDoor = DEFAULT_LOCATION.get();
-            this.firstPointDoorEntry = new LocationEntry(doorKey + "firstPoint", config);
+//            this.doors = new ArrayList<>(Arrays.asList(new Door(DEFAULT_LOCATION.get(), DEFAULT_LOCATION.get()), new Door(DEFAULT_LOCATION.get(), DEFAULT_LOCATION.get())));
+//            this.doorsEntry = new ListEntry(doorKey, config);
 
-            this.secondPointDoor = DEFAULT_LOCATION.get();
-            this.secondPointDoorEntry = new LocationEntry(doorKey + "secondPoint", config);
+            final String firstDoor = doorKey + "firstDoor.";
+            this.firstPointFirstDoor = DEFAULT_LOCATION.get();
+            this.firstPointFirstDoorEntry = new LocationEntry(firstDoor + "firstPoint", config);
+            this.secondPointFirstDoor = DEFAULT_LOCATION.get();
+            this.secondPointFirstDoorEntry = new LocationEntry(firstDoor + "secondPoint", config);
+
+            final String secondDoor = doorKey + "secondDoor.";
+            this.firstPointSecondDoor = null;
+            this.firstPointSecondDoorEntry = new LocationEntry(secondDoor + "firstPoint", config);
+            this.secondPointSecondDoor = null;
+            this.secondPointSecondDoorEntry = new LocationEntry(secondDoor + "secondPoint", config);
+
 
             this.firstPointSpawn = DEFAULT_LOCATION.get();
             this.firstPointSpawnEntry = new LocationEntry(spawnAreaKey + "firstPointArea", config);
@@ -173,14 +201,22 @@ public class HyriLGConfiguration implements IHyriConfiguration {
 
             this.spawnCloseDoorLocation = DEFAULT_LOCATION.get();
             this.spawnCloseDoorLocationEntry = new LocationEntry(spawnKey + "spawnclose", config);
+
         }
 
         @Override
         public void create() {
             this.spawnLocationEntry.setDefault(this.spawnLocation);
-            this.firstPointDoorEntry.setDefault(this.firstPointDoor);
-            this.secondPointDoorEntry.setDefault(this.secondPointDoor);
+
+//            this.doorsEntry.setDefault(this.doors);
+
             this.spawnCloseDoorLocationEntry.setDefault(this.spawnCloseDoorLocation);
+
+            this.firstPointFirstDoorEntry.setDefault(this.firstPointFirstDoor);
+            this.secondPointFirstDoorEntry.setDefault(this.secondPointFirstDoor);
+            this.firstPointSecondDoorEntry.setDefault(this.firstPointSecondDoor);
+            this.secondPointSecondDoorEntry.setDefault(this.secondPointSecondDoor);
+
             this.firstPointSpawnEntry.setDefault(this.firstPointSpawn);
             this.secondPointSpawnEntry.setDefault(this.secondPointSpawn);
         }
@@ -188,9 +224,15 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         @Override
         public void load() {
             this.spawnLocation = this.spawnLocationEntry.get();
-            this.firstPointDoor = this.firstPointDoorEntry.get();
-            this.secondPointDoor = this.secondPointDoorEntry.get();
             this.spawnCloseDoorLocation = this.spawnCloseDoorLocationEntry.get();
+
+//           this.doors = this.doorsEntry.get().stream().map(o -> (Door)o).collect(Collectors.toList());
+            this.firstPointFirstDoor = this.firstPointFirstDoorEntry.get();
+            this.secondPointFirstDoor = this.secondPointFirstDoorEntry.get();
+
+            this.firstPointSecondDoor = this.firstPointSecondDoorEntry.get();
+            this.secondPointSecondDoor = this.secondPointSecondDoorEntry.get();
+
             this.firstPointSpawn = this.firstPointSpawnEntry.get();
             this.secondPointSpawn = this.secondPointSpawnEntry.get();
         }
@@ -198,8 +240,12 @@ public class HyriLGConfiguration implements IHyriConfiguration {
         @Override
         public void save() {
             this.spawnLocationEntry.set(this.spawnLocation);
-            this.firstPointDoorEntry.set(this.firstPointDoor);
-            this.secondPointDoorEntry.set(this.secondPointDoor);
+            this.firstPointFirstDoorEntry.set(this.firstPointFirstDoor);
+            this.secondPointFirstDoorEntry.set(this.secondPointFirstDoor);
+
+            this.firstPointSecondDoorEntry.set(this.firstPointSecondDoor);
+            this.secondPointSecondDoorEntry.set(this.secondPointSecondDoor);
+//            this.doorsEntry.set(this.doors);
             this.spawnCloseDoorLocationEntry.set(this.spawnCloseDoorLocation);
             this.firstPointSpawnEntry.set(this.firstPointSpawn);
             this.secondPointSpawnEntry.set(this.secondPointSpawn);
@@ -214,12 +260,20 @@ public class HyriLGConfiguration implements IHyriConfiguration {
             return spawnLocation;
         }
 
-        public Location getFirstPointDoor() {
-            return firstPointDoor;
+        public Location getFirstPointFirstDoor() {
+            return firstPointFirstDoor;
         }
 
-        public Location getSecondPointDoor() {
-            return secondPointDoor;
+        public Location getSecondPointFirstDoor() {
+            return secondPointFirstDoor;
+        }
+
+        public Location getFirstPointSecondDoor() {
+            return firstPointSecondDoor;
+        }
+
+        public Location getSecondPointSecondDoor() {
+            return secondPointSecondDoor;
         }
 
         public Location getSpawnCloseDoorLocation() {
@@ -234,5 +288,28 @@ public class HyriLGConfiguration implements IHyriConfiguration {
             return secondPointSpawn;
         }
     }
+
+//    public class Door{
+//
+//        private Location firstPointDoor;
+//        private Location secondPointDoor;
+//
+//        public Door(String key, Location firstPointDoor, Location secondPointDoor){
+//            this.firstPointDoor = firstPointDoor;
+//            this.firstPointDoorEntry = new LocationEntry("", config);
+//            this.secondPointDoor = secondPointDoor;
+//            this.secondPointDoorEntry = new LocationEntry("", config);
+//        }
+//
+//        public Location getFirstPointDoor() {
+//            return firstPointDoor;
+//        }
+//
+//        public Location getSecondPointDoor() {
+//            return secondPointDoor;
+//        }
+//
+//
+//    }
 
 }

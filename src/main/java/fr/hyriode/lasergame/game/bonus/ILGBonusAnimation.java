@@ -8,13 +8,13 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-public interface IHyriLGBonusAnimation {
+public interface ILGBonusAnimation {
 
     void start();
 
     void stop();
 
-    class Default implements IHyriLGBonusAnimation {
+    class Default implements ILGBonusAnimation {
 
         private final ArmorStand armorStand;
         private BukkitTask task;
@@ -43,7 +43,7 @@ public interface IHyriLGBonusAnimation {
         }
 
         private void rotate() {
-            this.armorStand.setHeadPose(new EulerAngle(0, Math.toRadians(rotate += 3), 0));
+            this.armorStand.setHeadPose(new EulerAngle(Math.toRadians(rotate += 4), Math.toRadians(rotate), 0));
 
             if(down){
                 this.armorStand.teleport(location.clone().add(new Vector().setY(up -= 0.05D)));

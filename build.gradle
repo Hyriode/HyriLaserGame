@@ -40,13 +40,19 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     shadow 'xyz.xenondevs:particle:1.7'
-    implementation 'fr.hyriode:hyrame:1.1.6'
+    implementation 'fr.hyriode:hyrame:1.1.7'
 }
 
 processResources {
     filter {
         it.replace('@version@', project.version)
     }
+    task repairPublicFiles(type: Copy) {
+        from 'src/main/resources'
+        into 'build/resources/main'
+    }
+    processResources.finalizedBy repairPublicFiles
+
 }
 
 shadowJar {

@@ -3,13 +3,13 @@ package fr.hyriode.lasergame;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class HyriLGProvider implements IPluginProvider {
+public class LGProvider implements IPluginProvider {
 
     private static final String PACKAGE = "fr.hyriode.lasergame";
 
     private final HyriLaserGame plugin;
 
-    public HyriLGProvider(HyriLaserGame plugin){
+    public LGProvider(HyriLaserGame plugin){
         this.plugin = plugin;
     }
 

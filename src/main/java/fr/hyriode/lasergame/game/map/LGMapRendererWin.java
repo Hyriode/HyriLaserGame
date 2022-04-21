@@ -2,27 +2,28 @@ package fr.hyriode.lasergame.game.map;
 
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.lasergame.HyriLaserGame;
-import fr.hyriode.lasergame.game.player.HyriLGPlayer;
+import fr.hyriode.lasergame.game.player.LGGamePlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.map.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class HyriLGMapRendererWin extends MapRenderer {
+public class LGMapRendererWin extends MapRenderer {
 
     private final HyriLaserGame plugin;
 
     private boolean hasRendered = false;
 
-    public HyriLGMapRendererWin(HyriLaserGame plugin){
+    public LGMapRendererWin(HyriLaserGame plugin){
         this.plugin = plugin;
     }
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
         if(!hasRendered) {
-            final HyriLGPlayer lgPlayer = this.plugin.getGame().getPlayer(player.getUniqueId());
+            final LGGamePlayer lgPlayer = this.plugin.getGame().getPlayer(player.getUniqueId());
             final HyriGameTeam winner = this.plugin.getGame().getWinner();
             final HyriGameTeam looser = this.plugin.getGame().getLooser();
             final boolean win = winner.contains(lgPlayer);
@@ -35,10 +36,10 @@ public class HyriLGMapRendererWin extends MapRenderer {
 
             graphics.setColor(Color.decode("#FFAA00"));
 
-            String title = this.plugin.getHyrame().getLanguageManager().getValue(player, "map.title.victory");
+            String title = this.getKeyTitle(player, "victory");
             if (!win) {
-                graphics.setColor(Color.RED);
-                title = this.plugin.getHyrame().getLanguageManager().getValue(player, "map.title.defeat");
+                graphics.setColor(Color.decode("#FF0000"));
+                title = this.getKeyTitle(player, "defeat");
             }
 
             //Title
@@ -67,14 +68,14 @@ public class HyriLGMapRendererWin extends MapRenderer {
             /*Score of the Player*/
 
             graphics.setColor(Color.decode("#77B2BF"));
-            String playerTitle = this.plugin.getHyrame().getLanguageManager().getValue(lgPlayer.getPlayer(), "map.player.title") + ": ";
+            String playerTitle = this.getKeyPlayer(lgPlayer.getPlayer(), "title") + ": ";
             drawString(graphics, playerTitle, 10, 80, font.deriveFont(8F));
             int posPlayerX = playerTitle.length() * (graphics.getFont().getSize() / 2 + 1);
             graphics.setColor(Color.WHITE);
             drawString(graphics, ""+lgPlayer.getPlayerPoints(), 10 + posPlayerX, 80, font.deriveFont(8F));
 
-            drawString(graphics, "- " + this.plugin.getHyrame().getLanguageManager().getValue(lgPlayer.getPlayer(), "map.player.kills") + ": " + lgPlayer.getKills(), 10, 90, font.deriveFont(8F));
-            drawString(graphics, "- " + this.plugin.getHyrame().getLanguageManager().getValue(lgPlayer.getPlayer(), "map.player.deaths") + ": " + lgPlayer.getDeaths(), 10, 100, font.deriveFont(8F));
+            drawString(graphics, "- " + this.getKeyPlayer(lgPlayer.getPlayer(), "kills") + ": " + lgPlayer.getKills(), 10, 90, font.deriveFont(8F));
+            drawString(graphics, "- " + this.getKeyPlayer(lgPlayer.getPlayer(), "deaths") + ": " + lgPlayer.getDeaths(), 10, 100, font.deriveFont(8F));
 
             //Draw map
             mapCanvas.drawImage(0, 0, image);
@@ -82,6 +83,14 @@ public class HyriLGMapRendererWin extends MapRenderer {
             hasRendered = true;
         }
 
+    }
+
+    private String getKeyPlayer(Player player, String key){
+        return HyriLaserGame.getLanguageManager().getValue(player, "map.player." + key);
+    }
+
+    private String getKeyTitle(Player player, String key){
+        return HyriLaserGame.getLanguageManager().getValue(player, "map.title." + key);
     }
 
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
