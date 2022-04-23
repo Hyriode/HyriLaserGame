@@ -1,24 +1,24 @@
 package fr.hyriode.lasergame.game;
 
-import fr.hyriode.hyrame.game.team.HyriGameTeamColor;
+import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
+import fr.hyriode.lasergame.HyriLaserGame;
+import fr.hyriode.lasergame.configuration.LGConfiguration;
 
-public enum LGGameTeam {
-    RED("red", HyriGameTeamColor.RED),
-    BLUE("blue", HyriGameTeamColor.BLUE);
+public class LGGameTeam extends HyriGameTeam {
 
-    private final String name;
-    private final HyriGameTeamColor color;
+    private final HyriLaserGame plugin;
 
-    LGGameTeam(String name, HyriGameTeamColor color){
-        this.name = name;
-        this.color = color;
+    public LGGameTeam(HyriGame<?> game, HyriLaserGame plugin, ELGGameTeam color, int teamSize) {
+        super(game, color.getName(), color.getDisplayName().get(), color.getColor(), false, HyriScoreboardTeam.NameTagVisibility.NEVER, teamSize);
+        this.plugin = plugin;
+        this.initConfig();
     }
 
-    public String getName() {
-        return this.name;
-    }
+    private void initConfig(){
+//        LGConfiguration.Team config = this.plugin.getConfiguration().getTeam(this.getName());
 
-    public HyriGameTeamColor getColor() {
-        return color;
+
     }
 }

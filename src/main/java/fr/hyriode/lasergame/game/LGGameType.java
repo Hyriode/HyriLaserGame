@@ -22,17 +22,24 @@ public enum LGGameType implements HyriGameType {
 
     @Override
     public String getName() {
-        return name;
+        return this.name();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return this.name;
     }
 
     public int getTeamsSize() {
         return teamsSize;
     }
 
+    @Override
     public int getMinPlayers() {
         return minPlayers;
     }
 
+    @Override
     public int getMaxPlayers() {
         return maxPlayers;
     }

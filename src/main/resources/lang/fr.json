@@ -35,9 +35,9 @@
   "bonus.shoot_faster.description": "Vous tirez plus rapidement",
   "bonus.speed.description": "Vous êtes plus rapide pendant 10s",
   "bonus.shield.description": "Vous êtes invincible pendant 5s",
-  "bonus.pickup.title": "Vous as reçu:",
+  "bonus.pickup.title": "Vous avez reçu:",
   "bonus.pickup.description": "Description: ",
-  "bonus.pickup.already": "Vous as déjà un bonus !",
+  "bonus.pickup.already": "Vous avez déjà un bonus !",
 
   "damage.death.shield_fell": "Votre bouclié s'est cassé (Vous avez pris un dégat de chute)",
   "damage.death.fell": "+1 Mort (Vous êtes tombé)",

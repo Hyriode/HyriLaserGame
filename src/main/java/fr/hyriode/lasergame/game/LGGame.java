@@ -6,15 +6,15 @@ import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
+import fr.hyriode.hyrame.game.HyriGameType;
+import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.protocol.HyriSpectatorProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.item.ItemBuilder;
-import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Area;
 import fr.hyriode.lasergame.HyriLaserGame;
-import fr.hyriode.lasergame.api.manager.player.HyriLGPlayerManager;
 import fr.hyriode.lasergame.api.player.HyriLGPlayer;
 import fr.hyriode.lasergame.game.bonus.LGBonus;
 import fr.hyriode.lasergame.game.item.LGLaserGun;
@@ -22,14 +22,10 @@ import fr.hyriode.lasergame.game.map.LGMapRendererWin;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import fr.hyriode.lasergame.game.scoreboard.LGScoreboard;
 import net.minecraft.server.v1_8_R3.EntityFallingBlock;
-import net.minecraft.server.v1_8_R3.IBlockData;
-import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftFallingSand;
-import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
@@ -38,6 +34,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,17 +53,14 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     private boolean isStarted = false;
 
     public LGGame(IHyrame hyrame, HyriLaserGame plugin) {
-        super(hyrame, plugin, "lasergame", "LaserGame", LGGamePlayer.class, plugin.getConfiguration().getGameType());
+        super(hyrame, plugin, HyriAPI.get().getGameManager().getGameInfo("lasergame"), LGGamePlayer.class, HyriGameType.getFromData(LGGameType.values()));
+        this.gameType = LGGameType.SQUAD;
 
         this.plugin = plugin;
-        this.gameType = this.plugin.getConfiguration().getGameType();
 
         this.bonus = new ArrayList<>();
 
-        this.minPlayers = this.gameType.getMinPlayers();
-        this.maxPlayers = this.gameType.getMaxPlayers();
-
-        for (LGGameTeam team : LGGameTeam.values())
+        for (ELGGameTeam team : ELGGameTeam.values())
             this.registerTeam(this.createTeam(team));
 
     }
@@ -150,9 +144,9 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                     });
                     --i;
                 }else {
-                    plugin.getConfiguration().getTeams().forEach((gameTeam, team) -> {
-                        Location locFirstDoorFirst = team.getFirstPointFirstDoor();
-                        Location locSecondDoorFirst = team.getSecondPointFirstDoor();
+                    plugin.getConfiguration().getTeams().forEach((team) -> {
+                        Location locFirstDoorFirst = team.getDoors().get(0).getFirstPointDoor();
+                        Location locSecondDoorFirst = team.getDoors().get(0).getSecondPointDoor();
                         BlockState block = locFirstDoorFirst.clone().getBlock().getState();
                         new BukkitRunnable(){
                             int i = 5;
@@ -165,7 +159,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            kickPlayersInBase(team.getFirstPointSpawn(), team.getSecondPointSpawn(), team.getSpawnCloseDoorLocation());
+                                            kickPlayersInBase(team.getFirstPointBaseArea(), team.getSecondPointBaseArea(), team.getSpawnCloseDoorLocation());
                                             players.forEach(player -> {
                                                 player.getPlayer().setExp(1.0F);
                                                 new ActionBar(ChatColor.GREEN + HyriLaserGame.getLanguageManager().getValue(player.getPlayer(), "player.death.subtitle.good")).send(player.getPlayer());
@@ -182,19 +176,21 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                         }.runTaskTimer(plugin, 0, 20);
                         doorAnimationOpen(locFirstDoorFirst, locSecondDoorFirst, block);
 
-                        Location locFirstDoorSecond = team.getFirstPointSecondDoor();
-                        Location locSecondDoorSecond = team.getSecondPointSecondDoor();
+                        if(team.getDoors().size() > 1) {
+                            Location locFirstDoorSecond = team.getDoors().get(1).getFirstPointDoor();
+                            Location locSecondDoorSecond = team.getDoors().get(1).getSecondPointDoor();
 
-                        if(locFirstDoorSecond != null && locSecondDoorSecond != null) {
-                            BlockState blockSecond = locFirstDoorSecond.clone().getBlock().getState();
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    doorAnimationClose(locFirstDoorSecond, locSecondDoorSecond, blockSecond);
-                                }
-                            }.runTaskLater(plugin, 20L * 5);
-                            doorAnimationOpen(locFirstDoorSecond, locSecondDoorSecond, blockSecond);
-                        }else System.out.println("The second door don't exist");
+                            if (locFirstDoorSecond != null && locSecondDoorSecond != null) {
+                                BlockState blockSecond = locFirstDoorSecond.clone().getBlock().getState();
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        doorAnimationClose(locFirstDoorSecond, locSecondDoorSecond, blockSecond);
+                                    }
+                                }.runTaskLater(plugin, 20L * 5);
+                                doorAnimationOpen(locFirstDoorSecond, locSecondDoorSecond, blockSecond);
+                            } else System.out.println("The second door don't exist");
+                        }
                     });
                     cancel();
 
@@ -208,10 +204,27 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     public void handleLogin(Player p) {
         super.handleLogin(p);
 
-        HyriLGPlayerManager m = this.plugin.getAPI().getPlayerManager();
-        if (m.getPlayer(p.getUniqueId()) == null) {
-            m.createPlayer(p.getUniqueId());
-        }
+//        try {
+//            if (this.getState() == HyriGameState.WAITING || this.getState() == HyriGameState.READY) {
+//                if (!this.isFull()) {
+//                    final LGGamePlayer player = LGGamePlayer.class.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
+//
+//                    this.players.add(player);
+//
+////                    this.updatePlayerCount();
+//
+//                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
+//
+//                    if (this.usingGameTabList) {
+//                        this.tabListManager.handleLogin(p);
+//                    }
+//                }
+//            }
+//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//            p.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
+//            HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
+//            e.printStackTrace();
+//        }
 
         p.getInventory().setArmorContents(null);
         p.getInventory().clear();
@@ -221,10 +234,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         p.setLevel(0);
         p.setExp(0.0F);
         p.setCanPickupItems(false);
-        p.teleport(this.plugin.getConfiguration().getSpawnLocation());
-
-        HyriGameItems.TEAM_SELECTOR.give(this.hyrame, p, 0);
-        HyriGameItems.LEAVE.give(this.hyrame, p, 8);
+        p.teleport(this.plugin.getConfiguration().getWaitingRoom().getWaitingSpawn());
 
         this.getPlayer(p.getUniqueId()).setPlugin(this.plugin);
     }
@@ -249,16 +259,19 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     public void win(HyriGameTeam winner) {
         super.win(winner);
         System.out.println("Game down");
+        this.getWinner().getPlayers().forEach(player -> {
+            HyriLGPlayer pl = this.getPlayer(player.getUUID()).getAccount();
+
+            pl.setCurrentWinStreak(pl.getCurrentWinStreak() + 1);
+            pl.setBestWinStreak(pl.getBestWinStreak() + 1);
+            pl.update((LGGamePlayer) player);
+        });
         this.players.forEach(player -> {
             player.setSpectator(true);
             giveResultMap(player.getPlayer());
 
-            HyriLGPlayer pl = this.plugin.getAPI().getPlayerManager().getPlayer(player.getUUID());
-            
-            pl.setCurrentWinStreak(pl.getCurrentWinStreak() + 1);
-            pl.setBestWinStreak(pl.getBestWinStreak() + 1);
-
-            refreshAPIPlayer(player);
+            HyriLGPlayer pl = this.getPlayer(player.getUUID()).getAccount();
+            pl.update(player);
         });
     }
 
@@ -323,10 +336,9 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         });
     }
 
-    private HyriGameTeam createTeam(LGGameTeam gameTeam){
-        final HyriGameTeam team = new HyriGameTeam(this, gameTeam.getName(),
-                HyriLaserGame.getLanguageManager().getMessage(gameTeam.getName()+".display"), gameTeam.getColor(), HyriScoreboardTeam.NameTagVisibility.NEVER, this.gameType.getTeamsSize());
-        team.setSpawnLocation(this.plugin.getConfiguration().getTeams().get(gameTeam).getSpawnLocation());
+    private HyriGameTeam createTeam(ELGGameTeam gameTeam){
+        final LGGameTeam team = new LGGameTeam(this, this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
+        team.setSpawnLocation(this.plugin.getConfiguration().getTeam(gameTeam.getName()).getSpawnLocation());
         return team;
     }
 
@@ -417,19 +429,13 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     }
 
     private void refreshAPIPlayer(LGGamePlayer gamePlayer) {
-        final HyriLGPlayer account = this.plugin.getAPI().getPlayerManager().getPlayer(gamePlayer.getPlayer().getUniqueId());
+        final HyriLGPlayer account = gamePlayer.getAccount();
 
         if (this.getState() != HyriGameState.READY && this.getState() != HyriGameState.WAITING) {
             if(account != null) {
-                account.addPlayedTime(gamePlayer.getPlayedTime());
-                account.addKills(gamePlayer.getKills());
-                account.addDeaths(gamePlayer.getDeaths());
-                account.setBestKillStreak(gamePlayer.getDeaths());
-
-                this.plugin.getAPI().getPlayerManager().sendPlayer(account);
+                account.update(gamePlayer);
             }
         }
-
     }
 
     public HyriGameTeam getAdverseTeam(HyriGameTeam team) {

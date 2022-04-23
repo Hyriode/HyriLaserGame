@@ -1,10 +1,12 @@
 package fr.hyriode.lasergame.api.player;
 
-import java.util.UUID;
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.HyriPlayerData;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.lasergame.game.player.LGGamePlayer;
 
-public class HyriLGPlayer {
+public class HyriLGPlayer extends HyriPlayerData {
 
-    private final UUID uniqueId;
     private long kills;
     private long deaths;
     private long bestScore;
@@ -13,19 +15,7 @@ public class HyriLGPlayer {
     private long bestWinStreak;
     private long currentWinStreak;
 
-    public HyriLGPlayer(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-        this.kills = 0;
-        this.deaths = 0;
-        this.bestScore = 0;
-        this.playTime = 0;
-        this.bestKillStreak = 0;
-        this.bestWinStreak = 0;
-        this.currentWinStreak = 0;
-    }
-
-    public UUID getUniqueId() {
-        return this.uniqueId;
+    public HyriLGPlayer() {
     }
 
     public void setKills(long kills) {
@@ -97,4 +87,13 @@ public class HyriLGPlayer {
         return this.currentWinStreak;
     }
 
+    public void update(LGGamePlayer gamePlayer) {
+        IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(gamePlayer.getUUID());
+        this.addPlayedTime(gamePlayer.getPlayedTime());
+        this.addKills(gamePlayer.getKills());
+        this.addDeaths(gamePlayer.getDeaths());
+        this.setBestKillStreak(gamePlayer.getDeaths());
+        player.addData("bedwars", this);
+        player.update();
+    }
 }

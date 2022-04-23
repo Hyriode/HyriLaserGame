@@ -1,5 +1,6 @@
 package fr.hyriode.lasergame.game.player;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGame;
@@ -12,6 +13,7 @@ import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.lasergame.HyriLaserGame;
+import fr.hyriode.lasergame.api.player.HyriLGPlayer;
 import fr.hyriode.lasergame.game.bonus.LGBonus;
 import fr.hyriode.lasergame.game.bonus.LGBonusType;
 import fr.hyriode.lasergame.game.item.LGLaserGun;
@@ -285,5 +287,9 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     public void setKillStreak(int killStreak) {
         this.killStreak = killStreak;
+    }
+
+    public HyriLGPlayer getAccount() {
+        return HyriAPI.get().getPlayerManager().getPlayer(this.getUUID()).getData("lasergame", HyriLGPlayer.class);
     }
 }
