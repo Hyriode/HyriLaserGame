@@ -31,6 +31,7 @@ public class LGBonus {
         armorStand.setCanPickupItems(false);
         armorStand.setBasePlate(false);
         armorStand.setMetadata(ISBONUS_METADATA, new FixedMetadataValue(plugin, true));
+        System.out.println("SPAWN ARMOR STAND");
 
         new ILGBonusAnimation.Default(plugin, location, armorStand).start();
         LGBonus bonus = new LGBonus(armorStand, location, plugin);

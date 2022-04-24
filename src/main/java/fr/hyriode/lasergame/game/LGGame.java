@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 public class LGGame extends HyriGame<LGGamePlayer> {
 
     private final HyriLaserGame plugin;
-    private final LGGameType gameType;
 
     private final List<LGBonus> bonus;
 
@@ -53,8 +52,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     private boolean isStarted = false;
 
     public LGGame(IHyrame hyrame, HyriLaserGame plugin) {
-        super(hyrame, plugin, HyriAPI.get().getGameManager().getGameInfo("lasergame"), LGGamePlayer.class, HyriGameType.getFromData(LGGameType.values()));
-        this.gameType = LGGameType.SQUAD;
+        super(hyrame, plugin, new LGGameInfo("lasergame", "LaserGame")/*HyriAPI.get().getGameManager().getGameInfo("lasergame")*/, LGGamePlayer.class, LGGameType.FOUR_FOUR/*HyriGameType.getFromData(LGGameType.values())*/);
 
         this.plugin = plugin;
 
@@ -75,7 +73,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
         //TODO mettre un message pour expliquer le but du jeu
 
-        HyriLaserGame.WORLD.get().getEntities().stream().filter(entity -> entity instanceof ArmorStand)
+        IHyrame.WORLD.get().getEntities().stream().filter(entity -> entity instanceof ArmorStand)
                 .collect(Collectors.toList()).forEach(Entity::remove);
 
         this.plugin.getConfiguration().getBonusLocation()
@@ -202,29 +200,29 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     @Override
     public void handleLogin(Player p) {
-        super.handleLogin(p);
+//        super.handleLogin(p);
 
-//        try {
-//            if (this.getState() == HyriGameState.WAITING || this.getState() == HyriGameState.READY) {
-//                if (!this.isFull()) {
-//                    final LGGamePlayer player = LGGamePlayer.class.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
-//
-//                    this.players.add(player);
-//
-////                    this.updatePlayerCount();
-//
-//                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
-//
-//                    if (this.usingGameTabList) {
-//                        this.tabListManager.handleLogin(p);
-//                    }
-//                }
-//            }
-//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//            p.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
-//            HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
-//            e.printStackTrace();
-//        }
+        try {
+            if (this.getState() == HyriGameState.WAITING || this.getState() == HyriGameState.READY) {
+                if (!this.isFull()) {
+                    final LGGamePlayer player = LGGamePlayer.class.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
+
+                    this.players.add(player);
+
+//                    this.updatePlayerCount();
+
+                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
+
+                    if (this.usingGameTabList) {
+                        this.tabListManager.handleLogin(p);
+                    }
+                }
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            p.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
+            HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
+            e.printStackTrace();
+        }
 
         p.getInventory().setArmorContents(null);
         p.getInventory().clear();
