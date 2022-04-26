@@ -52,7 +52,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     private boolean isStarted = false;
 
     public LGGame(IHyrame hyrame, HyriLaserGame plugin) {
-        super(hyrame, plugin, new LGGameInfo("lasergame", "LaserGame")/*HyriAPI.get().getGameManager().getGameInfo("lasergame")*/, LGGamePlayer.class, LGGameType.FOUR_FOUR/*HyriGameType.getFromData(LGGameType.values())*/);
+        super(hyrame, plugin, new LGGameInfo("lasergame", "LaserGame")/*HyriAPI.get().getGameManager().getGameInfo("lasergame")*/, LGGamePlayer.class, LGGameType.FIVE_FIVE/*HyriGameType.getFromData(LGGameType.values())*/);
 
         this.plugin = plugin;
 

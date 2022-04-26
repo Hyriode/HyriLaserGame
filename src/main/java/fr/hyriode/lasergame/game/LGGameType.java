@@ -3,9 +3,7 @@ package fr.hyriode.lasergame.game;
 import fr.hyriode.hyrame.game.HyriGameType;
 
 public enum LGGameType implements HyriGameType {
-    FOUR_FOUR("4v4", 4, 6, 8),
     FIVE_FIVE("5v5", 5, 8, 10),
-    SIX_SIX("6v6", 6, 10, 12)
     ;
 
     private final String name;
