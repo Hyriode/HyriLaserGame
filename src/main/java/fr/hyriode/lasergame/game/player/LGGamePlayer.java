@@ -72,6 +72,7 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         this.giveDeathArmor();
         this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * timeDeath, 1, true, true));
+        this.player.playSound(this.player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
         this.setDead(HyriGameDeathEvent.Reason.PLAYERS, new ArrayList<>());
 
         final HyriLanguageMessage dead = new HyriLanguageMessage("")
@@ -171,7 +172,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.setBonus(bonusType);
         bonusType.active(this, this.plugin);
 
-        this.player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 3F);
+        this.player.playSound(player.getLocation(), Sound.CHEST_OPEN, 1, 3F);
 
         new ActionBar(lm.getValue(this.getPlayer(), "bonus.pickup.title") + " " + ChatColor.RESET + bonusType.getLanguageName().getForPlayer(this.getPlayer())).send(this.getPlayer());
         this.getPlayer().sendMessage("   ");

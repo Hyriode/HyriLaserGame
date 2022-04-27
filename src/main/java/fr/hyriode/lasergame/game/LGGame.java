@@ -77,9 +77,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 .collect(Collectors.toList()).forEach(Entity::remove);
 
         this.plugin.getConfiguration().getBonusLocation()
-                .forEach(location -> {
-                    LGBonus.spawn(location, this.plugin);
-                });
+                .forEach(location -> Bukkit.getScheduler().runTaskLater(this.plugin, () -> LGBonus.spawn(location, this.plugin), 20));
 
         for (LGGamePlayer player : this.players) {
             final LGScoreboard scoreboard = new LGScoreboard(this.plugin, this, player.getPlayer());
@@ -240,6 +238,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     @Override
     public void handleLogout(Player p) {
         super.handleLogout(p);
+        if(this.getState() != HyriGameState.PLAYING) return;
         if(this.isStarted){
             if(this.players.isEmpty()) {
                 this.win(this.getWinner());
