@@ -62,7 +62,6 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     public void cleanPlayer(){
-        this.player.getInventory().clear();
         this.player.setGameMode(GameMode.ADVENTURE);
         this.player.setHealth(20.0F);
     }
