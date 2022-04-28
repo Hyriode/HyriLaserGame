@@ -37,7 +37,18 @@ public enum LGBonusType {
     }),
     INVERSION("inversion", 10, (player, plugin, time) -> {
         player.giveInverseArmor();
-        Bukkit.getScheduler().runTaskLater(plugin, player::giveArmor, time);
+        new BukkitRunnable(){
+            int i = 0;
+            @Override
+            public void run() {
+                if(i > time*20){
+                    this.cancel();
+                    if(player.isDead()) return;
+                }
+                player.giveArmor();
+                ++i;
+            }
+        }.runTaskTimer(plugin, 0, 1);
     }),
     SHOOT_FASTER("shoot_faster", 10),
     SPEED("speed", 10, (player, laserGame, integer) -> player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20*10, 0, true, true))),
