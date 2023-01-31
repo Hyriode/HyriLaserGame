@@ -1,5 +1,6 @@
 package fr.hyriode.lasergame.game.map;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
@@ -47,7 +48,7 @@ public class LGMapRendererWin extends MapRenderer {
 
             //Score
             /*Winner*/
-            String winnerTitle = winner.getDisplayName().getForPlayer(player) + ": ";
+            String winnerTitle = winner.getDisplayName().getValue(player) + ": ";
 
             graphics.setColor(new Color(winner.getColor().getDyeColor().getColor().asRGB()));
             drawString(graphics, winnerTitle, 10, 50, font.deriveFont(8F));
@@ -57,7 +58,7 @@ public class LGMapRendererWin extends MapRenderer {
             drawString(graphics, ""+this.plugin.getGame().getTeamPoints(winner), 10 + posWinnerX, 50, font.deriveFont(8F));
 
             /*Looser*/
-            String looserTitle = looser.getDisplayName().getForPlayer(player) + ": ";
+            String looserTitle = looser.getDisplayName().getValue(player) + ": ";
 
             graphics.setColor(new Color(looser.getColor().getDyeColor().getColor().asRGB()));
             drawString(graphics, looserTitle, 10, 60, font.deriveFont(8F));
@@ -86,11 +87,11 @@ public class LGMapRendererWin extends MapRenderer {
     }
 
     private String getKeyPlayer(Player player, String key){
-        return HyriLaserGame.getLanguageManager().getValue(player, "map.player." + key);
+        return HyriLanguageMessage.get("map.player." + key).getValue(player);
     }
 
     private String getKeyTitle(Player player, String key){
-        return HyriLaserGame.getLanguageManager().getValue(player, "map.title." + key);
+        return HyriLanguageMessage.get("map.title." + key).getValue(player);
     }
 
     public void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {

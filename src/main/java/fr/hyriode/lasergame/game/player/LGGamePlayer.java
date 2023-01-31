@@ -1,7 +1,9 @@
 package fr.hyriode.lasergame.game.player;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -9,8 +11,6 @@ import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.item.ItemNBT;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.api.player.HyriLGPlayer;
@@ -85,17 +85,17 @@ public class LGGamePlayer extends HyriGamePlayer {
                 if(plugin.getGame().getState() != HyriGameState.ENDED) {
                     if (i == 0) {
                         Title.sendTitle(player, " ", null, 1, 1, 1);
-                        new ActionBar(String.format(plugin.getHyrame().getLanguageManager().getValue(player, "player.death.subtitle.good"), i)).send(player);
+                        new ActionBar(String.format(HyriLanguageMessage.get("player.death.subtitle.good").getValue(player), i)).send(player);
                         this.cancel();
                         return;
                     }
-                    Title.sendTitle(player, ChatColor.RED + " " + dead.getForPlayer(player), String.format(plugin.getHyrame().getLanguageManager().getValue(player, "player.death.subtitle"), i), 1, 20, 1);
+                    Title.sendTitle(player, ChatColor.RED + " " + dead.getValue(player), String.format(HyriLanguageMessage.get("player.death.subtitle").getValue(player), i), 1, 20, 1);
                     --i;
                 }else this.cancel();
             }
         }.runTaskTimer(this.plugin, 0L, 20L);
 
-        this.player.sendMessage(this.plugin.getHyrame().getLanguageManager().getValue(this.player, "player.death.title"));
+        this.player.sendMessage(HyriLanguageMessage.get("player.death.title").getValue(this.player));
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             if(this.game.getState() != HyriGameState.ENDED) {
@@ -151,14 +151,13 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         if(!armorStand.hasMetadata(LGBonus.getIsBonusMetadata())) return;
 
-        LGBonusType bonusType = Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length));
-        IHyriLanguageManager lm = HyriLaserGame.getLanguageManager();
+        LGBonusType bonusType = LGBonusType.SHIELD;//Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length));
 
         if(this.hasBonus()){
             if(this.enableBonus) return;
             this.enableBonus = true;
 
-            this.getPlayer().sendMessage(ChatColor.RED + lm.getValue(this.getPlayer(), "bonus.pickup.already"));
+            this.getPlayer().sendMessage(ChatColor.RED + HyriLanguageMessage.get("bonus.pickup.already").getValue(this.getPlayer()));
             return;
         }
 
@@ -171,15 +170,16 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.setBonus(bonusType);
         bonusType.active(this, this.plugin);
 
-        this.player.playSound(player.getLocation(), Sound.CHEST_OPEN, 1, 3F);
+        this.player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 3F);
 
-        new ActionBar(lm.getValue(this.getPlayer(), "bonus.pickup.title") + " " + ChatColor.RESET + bonusType.getLanguageName().getForPlayer(this.getPlayer())).send(this.getPlayer());
+        new ActionBar(HyriLanguageMessage.get("bonus.pickup.title").getValue(this.getPlayer()) + " " + ChatColor.RESET + bonusType.getLanguageName().getValue(this.getPlayer())).send(this.getPlayer());
         this.getPlayer().sendMessage("   ");
-        this.getPlayer().sendMessage(ChatColor.DARK_AQUA + lm.getValue(this.getPlayer(), "bonus.pickup.title") + " " + ChatColor.RESET + bonusType.getLanguageName().getForPlayer(this.getPlayer()));
-        this.getPlayer().sendMessage(ChatColor.DARK_AQUA + lm.getValue(this.getPlayer(), "bonus.pickup.description") + ChatColor.GRAY + bonusType.getLanguageDescription().getForPlayer(this.getPlayer()));
+        this.getPlayer().sendMessage(ChatColor.DARK_AQUA + HyriLanguageMessage.get("bonus.pickup.title").getValue(this.getPlayer()) + " " + ChatColor.RESET + bonusType.getLanguageName().getValue(this.getPlayer()));
+        this.getPlayer().sendMessage(ChatColor.DARK_AQUA + HyriLanguageMessage.get("bonus.pickup.description").getValue(this.getPlayer()) + ChatColor.GRAY + bonusType.getLanguageDescription().getValue(this.getPlayer()));
 
         LGBonus bonus = this.plugin.getGame().getBonus(armorStand.getUniqueId());
-        bonus.respawn();
+        if(bonus != null)
+            bonus.respawn();
     }
 
     public void setScoreboard(LGScoreboard scoreboard) {
@@ -290,6 +290,20 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     public HyriLGPlayer getAccount() {
-        return HyriAPI.get().getPlayerManager().getPlayer(this.getUUID()).getData("lasergame", HyriLGPlayer.class);
+        IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(this.getUniqueId());
+        HyriLGPlayer lgPlayer = player.getStatistics("lasergame", HyriLGPlayer.class);
+        if(lgPlayer != null){
+            return lgPlayer;
+        }
+        return new HyriLGPlayer();
+    }
+
+    public HyriLGPlayer getStatistics() {
+        IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(this.getUniqueId());
+        HyriLGPlayer lgPlayer = player.getStatistics("lasergame", HyriLGPlayer.class);
+        if(lgPlayer != null){
+            return lgPlayer;
+        }
+        return new HyriLGPlayer();
     }
 }

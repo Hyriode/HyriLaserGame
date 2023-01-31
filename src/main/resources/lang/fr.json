@@ -1,4 +1,6 @@
 {
+  "game.description": "Tirez sur les adversaires pour les mettre hors-jeu et\nrécupérez les bonus de la carte. Accumulez les points et\ngagnez la partie en tuant le plus d'adversaires",
+
   "blue.display": "Bleu",
   "red.display": "Rouge",
 
@@ -15,6 +17,9 @@
   "scoreboard.looser.display": "Perdant: ",
   "scoreboard.time.display": "Timer: ",
   "scoreboard.suddendeath.display": "Mort subite",
+  "scoreboard.points.display": "Points",
+  "scoreboard.bonus.display": "Bonus",
+  "scoreboard.team.display": "Team",
 
   "map.title.victory": "VICTOIRE",
   "map.title.defeat": "DEFAITE",
@@ -23,7 +28,7 @@
   "map.player.kills": "Eliminations",
 
   "game.suddendeath.title": "Mort Subite",
-  "game.suddendeath.subtitle": "Tue (ou meurt) pour terminer la party",
+  "game.suddendeath.subtitle": "Tue pour terminer la party",
 
   "bonus.invisibility.name": "Invisibilité",
   "bonus.inversion.name": "Inversion",
@@ -45,5 +50,12 @@
   "damage.death.fell": "+1 Mort (Vous êtes tombé)",
 
   "game.timer.can-shoot": "Vous pouvez tirer dans",
-  "game.starting-in": "Commencement dans"
+  "game.starting-in": "Commencement dans",
+
+  "message.game.end.kills": "%position% Points §7- %player% §7- %kills%",
+  "message.game.end.1": "§e1er",
+  "message.game.end.2": "§62ème",
+  "message.game.end.3": "§c3ème",
+
+  "message.game.end.nobody": "Personne"
 }

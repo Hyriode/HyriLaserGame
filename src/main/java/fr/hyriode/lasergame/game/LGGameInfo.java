@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class LGGameInfo implements IHyriGameInfo {
     private final String name;
-    private final String displayName;
+    private String displayName;
     private final Map<String, HyriGameType> types;
 
     public LGGameInfo(String name, String displayName) {
@@ -25,6 +25,11 @@ public class LGGameInfo implements IHyriGameInfo {
     @Override
     public String getDisplayName() {
         return this.displayName;
+    }
+
+    @Override
+    public void setDisplayName(String s) {
+        this.displayName = s;
     }
 
     @Override

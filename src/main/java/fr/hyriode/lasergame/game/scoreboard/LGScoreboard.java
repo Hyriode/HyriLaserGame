@@ -1,5 +1,6 @@
 package fr.hyriode.lasergame.game.scoreboard;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.scoreboard.HyriGameScoreboard;
 import fr.hyriode.hyrame.game.scoreboard.HyriScoreboardIpConsumer;
@@ -42,23 +43,23 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
 
     private String getTeamLine(){
         HyriGameTeam team = this.getPlayerGame().getTeam();
-        return ChatColor.WHITE + this.getLinePrefix("team") + ": " + team.getColor().getChatColor() + team.getDisplayName().getForPlayer(this.getPlayer());
+        return ChatColor.WHITE + this.getLinePrefix("team") + ": " + team.getColor().getChatColor() + team.getDisplayName().getValue(this.getPlayer());
     }
 
     private String getPointsLine(){
         HyriGameTeam team = this.getPlayerGame().getTeam();
-        return team.getColor().getChatColor() + team.getDisplayName().getForPlayer(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team) + " ";
+        return team.getColor().getChatColor() + team.getDisplayName().getValue(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team) + " ";
     }
 
     private String getPointsAdverseLine(){
         HyriGameTeam team = this.game.getAdverseTeam(this.getPlayerGame().getTeam());
-        return team.getColor().getChatColor() + team.getDisplayName().getForPlayer(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team);
+        return team.getColor().getChatColor() + team.getDisplayName().getValue(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team);
     }
 
     private String getBonusLine(){
         if(this.plugin.getGame().getState() == HyriGameState.ENDED)
             return ChatColor.WHITE + this.getLinePrefix("points") + ": " + ChatColor.AQUA + this.plugin.getGame().getTeamPoints(this.plugin.getGame().getWinner());
-        return ChatColor.WHITE + this.getLinePrefix("bonus") + ": " + ChatColor.AQUA + (this.getPlayerGame().hasBonus() ? this.getPlayerGame().getBonus().getLanguageName().getForPlayer(player.getPlayer()) : HyriLaserGame.getLanguageManager().getValue(this.player, "bonus.unknown"));
+        return ChatColor.WHITE + this.getLinePrefix("bonus") + ": " + ChatColor.AQUA + (this.getPlayerGame().hasBonus() ? this.getPlayerGame().getBonus().getLanguageName().getValue(player.getPlayer()) : HyriLanguageMessage.get("bonus.unknown").getValue(this.player));
     }
 
     private String getTimeLine() {
@@ -71,7 +72,7 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
                 }else{
                     this.plugin.getGame().setFinalKill();
                     for(LGGamePlayer player : this.plugin.getGame().getPlayers()) {
-                        Title.sendTitle(player.getPlayer(), ChatColor.RED + this.plugin.getHyrame().getLanguageManager().getValue(player.getPlayer(), "game.suddendeath.title"), this.plugin.getHyrame().getLanguageManager().getValue(player.getPlayer(), "game.suddendeath.subtitle"), 1, 20*3, 1);
+                        Title.sendTitle(player.getPlayer(), ChatColor.RED + HyriLanguageMessage.get("game.suddendeath.title").getValue(player.getPlayer()), HyriLanguageMessage.get("game.suddendeath.subtitle").getValue(player.getPlayer()), 1, 20*3, 1);
                     }
                 }
             }
@@ -82,13 +83,13 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
             return ChatColor.WHITE + this.getLinePrefix("time") + ChatColor.AQUA + (min + "m" + sec + "s");
         else if(this.plugin.getGame().getState() == HyriGameState.ENDED) {
             HyriGameTeam team = this.plugin.getGame().getWinner();
-            return ChatColor.WHITE + this.getLinePrefix("winner") + team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player.getPlayer());
+            return ChatColor.WHITE + this.getLinePrefix("winner") + team.getColor().getChatColor() + team.getDisplayName().getValue(player.getPlayer());
         }else
             return ChatColor.WHITE + this.getLinePrefix("time") + ChatColor.AQUA + this.getLinePrefix("suddendeath");
     }
 
     private String getLinePrefix(String prefix) {
-        return this.plugin.getHyrame().getLanguageManager().getValue(this.player.getPlayer(), "scoreboard." + prefix + ".display");
+        return HyriLanguageMessage.get("scoreboard." + prefix + ".display").getValue(this.player.getPlayer());
     }
 
     private String getDateLine() {

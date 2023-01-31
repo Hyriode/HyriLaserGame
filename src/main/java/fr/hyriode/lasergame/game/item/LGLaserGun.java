@@ -1,11 +1,11 @@
 package fr.hyriode.lasergame.game.item;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.item.HyriItem;
-import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.utils.target.TargetInfo;
 import fr.hyriode.hyrame.utils.target.TargetProvider;
 import fr.hyriode.lasergame.HyriLaserGame;
@@ -17,9 +17,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -37,12 +34,10 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
 
     public static final String LASER_GUN_NBT = "LaserGun";
 
-    private final Supplier<LGGame> game = this.plugin::getGame;
-
     private boolean enable;
 
     public LGLaserGun(HyriLaserGame plugin) {
-        super(plugin, "lasergun", () -> plugin.getHyrame().getLanguageManager().getMessage("item.lasergun"), ArrayList::new, Material.IRON_HOE);
+        super(plugin, "lasergun", () -> HyriLanguageMessage.get("item.lasergun"), ArrayList::new, Material.IRON_HOE);
         this.enable = false;
     }
 
@@ -62,20 +57,21 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
 
     private void click(Player player){
         if(!enable) return;
-        LGGamePlayer killer = game.get().getPlayer(player.getUniqueId());
+        LGGame game = this.plugin.getGame();
+        LGGamePlayer killer = game.getPlayer(player.getUniqueId());
         boolean isFaster = killer.hasBonus() && killer.getBonus() == LGBonusType.SHOOT_FASTER;
 
         if((!killer.isCooldown() || isFaster) && !killer.isDead()) {
             final double maxRange = this.plugin.getConfiguration().getLaserRange();
-            final boolean friendlyFire = this.plugin.getConfiguration().isFriendlyFire();
+            final boolean friendlyFire = killer.getTeam().isFriendlyFire();
 
             final HyriGameTeam team = this.plugin.getGame().getPlayer(player.getUniqueId()).getTeam();
             final List<Player> teamPlayers = team.getPlayers().stream().map(HyriGamePlayer::getPlayer).collect(Collectors.toList());
             final List<Material> whitelistedBlocks = Arrays.asList(Material.AIR, Material.IRON_FENCE, Material.BARRIER);
             final TargetInfo targetInfo = new TargetProvider(player, maxRange)
-                    .withAimingTolerance(1.30D)
+                    .withAimingTolerance(1.60D)
                     .withIgnoredBlocks(whitelistedBlocks)
-                    .withIgnoredEntities(teamPlayers.stream().map(p -> (Entity)p).collect(Collectors.toList()))
+                    .withIgnoredEntities(friendlyFire ? new ArrayList<>() : teamPlayers.stream().map(p -> (Entity)p).collect(Collectors.toList()))
                     .get();
             final Color colorTeam = team.getColor().getDyeColor().getColor();
             final Location eyeLocation = player.getEyeLocation();
@@ -93,10 +89,10 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
                     }
                 }else {
 
-                    LGGamePlayer targetPlayer = game.get().getPlayer(targetInfo.getEntity().getUniqueId());
+                    LGGamePlayer targetPlayer = game.getPlayer(targetInfo.getEntity().getUniqueId());
                     boolean isShieldTarget = targetPlayer.hasBonus() && targetPlayer.getBonus() == LGBonusType.SHIELD;
 
-                    if (!targetPlayer.isDead() && !isShieldTarget) {
+                    if (!targetPlayer.isDead() && !targetPlayer.isSpectator() && !isShieldTarget) {
                         new ActionBar(ChatColor.GREEN + "+1 Kill").send(player);
                         player.sendMessage(ChatColor.GREEN + "+1 Kill");
 
@@ -111,8 +107,8 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
 
                         this.playHitSound(player);
                         this.playDeathSound((Player) targetInfo.getEntity());
-                        if (game.get().isFinalKill()) {
-                            game.get().win(game.get().getWinner());
+                        if (game.isFinalKill()) {
+                            game.win(game.getWinner());
                         }
                     }
                 }
@@ -145,19 +141,6 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
             this.setCooldown(killer);
         }
     }
-
-//    public class LaserGun extends HyriListener<HyriLaserGame> {
-//
-//        public LaserGun(HyriLaserGame plugin) {
-//            super(plugin);
-//        }
-//
-//        @EventHandler
-//        public void onClick(PlayerInteractEvent event){
-//            click(event.getPlayer());
-//        }
-//
-//    }
 
     private void setCooldown(LGGamePlayer player) {
         if(!player.isCooldown()) {

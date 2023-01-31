@@ -1,7 +1,7 @@
 package fr.hyriode.lasergame.game;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.team.HyriGameTeamColor;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.lasergame.HyriLaserGame;
 
 import java.util.function.Supplier;
@@ -17,7 +17,7 @@ public enum ELGGameTeam {
     ELGGameTeam(String name, HyriGameTeamColor color){
         this.name = name;
         this.color = color;
-        this.displayName = () -> HyriLaserGame.getLanguageManager().getMessage(this.name + ".display");
+        this.displayName = () -> HyriLanguageMessage.get(this.name + ".display");
     }
 
     public String getName() {

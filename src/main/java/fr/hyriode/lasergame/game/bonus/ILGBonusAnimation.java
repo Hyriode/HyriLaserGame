@@ -1,6 +1,7 @@
 package fr.hyriode.lasergame.game.bonus;
 
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,7 +40,7 @@ public interface ILGBonusAnimation {
                 public void run() {
                     rotate();
                 }
-            }.runTaskTimerAsynchronously(this.plugin, 0L, 1L);
+            }.runTaskTimer(this.plugin, 0L, 1L);
         }
 
         private void rotate() {

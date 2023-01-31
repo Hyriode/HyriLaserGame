@@ -40,7 +40,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     shadow 'xyz.xenondevs:particle:1.7'
-    implementation 'fr.hyriode:hyrame:1.2.0'
+    implementation 'fr.hyriode:hyrame:1.3.4'
 }
 
 processResources {
@@ -57,4 +57,13 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadow]
+}
+
+task deploy(dependsOn: shadowJar) {
+    doLast {
+        copy {
+            from "$buildDir/libs/HyriLaserGame-1.0.0-all.jar"
+            into "$buildDir/libs/TestServeur/plugins"
+        }
+    }
 }

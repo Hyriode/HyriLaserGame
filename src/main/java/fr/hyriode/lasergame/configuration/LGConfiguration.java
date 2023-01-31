@@ -14,14 +14,18 @@ public class LGConfiguration implements IConfig {
 
     private final WaitingRoom waitingRoom;
     private final List<LocationWrapper> bonusLocation;
+    private final List<LocationWrapper> spawnLocations;
     private final double laserRange;
     private final boolean friendlyFire;
     private final int timeSecond;
 
-    public LGConfiguration(List<Team> teams, WaitingRoom waitingRoom, List<LocationWrapper> bonusLocation, double laserRange, boolean friendlyFire, int timeSecond){
+    public LGConfiguration(List<Team> teams, WaitingRoom waitingRoom, List<LocationWrapper> bonusLocation,
+                           List<LocationWrapper> spawnLocations, double laserRange,
+                           boolean friendlyFire, int timeSecond){
         this.teams = teams;
         this.waitingRoom = waitingRoom;
         this.bonusLocation = bonusLocation;
+        this.spawnLocations = spawnLocations;
         this.laserRange = laserRange;
         this.friendlyFire = friendlyFire;
         this.timeSecond = timeSecond;
@@ -45,6 +49,10 @@ public class LGConfiguration implements IConfig {
 
     public List<Location> getBonusLocation() {
         return this.bonusLocation.stream().map(LocationWrapper::asBukkit).collect(Collectors.toList());
+    }
+
+    public List<LocationWrapper> getSpawnLocations() {
+        return spawnLocations;
     }
 
     public int getTimeSecond() {

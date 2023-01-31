@@ -1,22 +1,24 @@
 package fr.hyriode.lasergame.game;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.HyriGameType;
-import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
-import fr.hyriode.hyrame.game.protocol.HyriSpectatorProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.game.util.HyriGameItems;
+import fr.hyriode.hyrame.game.util.HyriGameMessages;
+import fr.hyriode.hyrame.game.util.HyriRewardAlgorithm;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Area;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.api.player.HyriLGPlayer;
 import fr.hyriode.lasergame.game.bonus.LGBonus;
+import fr.hyriode.lasergame.game.bonus.effect.SphereEffect;
 import fr.hyriode.lasergame.game.item.LGLaserGun;
 import fr.hyriode.lasergame.game.map.LGMapRendererWin;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
@@ -34,7 +36,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,9 +53,11 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     private boolean isStarted = false;
 
     public LGGame(IHyrame hyrame, HyriLaserGame plugin) {
-        super(hyrame, plugin, new LGGameInfo("lasergame", "LaserGame")/*HyriAPI.get().getGameManager().getGameInfo("lasergame")*/, LGGamePlayer.class, LGGameType.FIVE_FIVE/*HyriGameType.getFromData(LGGameType.values())*/);
+        super(hyrame, plugin, HyriAPI.get().getConfig().isDevEnvironment() ? new LGGameInfo("lasergame", "LaserGame") : HyriAPI.get().getGameManager().getGameInfo("lasergame"), LGGamePlayer.class, HyriAPI.get().getConfig().isDevEnvironment() ? LGGameType.FIVE_FIVE : HyriGameType.getFromData(LGGameType.values()));
 
         this.plugin = plugin;
+
+        this.description = HyriLanguageMessage.get("game.description");
 
         this.bonus = new ArrayList<>();
 
@@ -64,14 +67,15 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     }
 
     @Override
+    public void postRegistration() {
+        super.postRegistration();
+    }
+
+    @Override
     public void start() {
         super.start();
 
         this.isStarted = true;
-
-        this.protocolManager.enableProtocol(new HyriSpectatorProtocol(hyrame, plugin));
-
-        //TODO mettre un message pour expliquer le but du jeu
 
         IHyrame.WORLD.get().getEntities().stream().filter(entity -> entity instanceof ArmorStand)
                 .collect(Collectors.toList()).forEach(Entity::remove);
@@ -80,19 +84,20 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 .forEach(location -> Bukkit.getScheduler().runTaskLater(this.plugin, () -> LGBonus.spawn(location, this.plugin), 20));
 
         for (LGGamePlayer player : this.players) {
-            final LGScoreboard scoreboard = new LGScoreboard(this.plugin, this, player.getPlayer());
+            Player p = player.getPlayer();
+            final LGScoreboard scoreboard = new LGScoreboard(this.plugin, this, p);
 
             player.setScoreboard(scoreboard);
             scoreboard.show();
 
-            player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
 
             player.cleanPlayer();
             player.giveGun();
             player.giveArmor();
         }
 
-        this.teams.forEach(HyriGameTeam::teleportToSpawn);
+        this.getLGTeams().forEach(LGGameTeam::teleportToSpawn);
 
         new BukkitRunnable(){
             int i = 10;
@@ -106,7 +111,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                     players.forEach(p -> {
                         Player player = p.getPlayer();
                         String text = ChatColor.AQUA + "" + i;
-                        String msg = ChatColor.DARK_AQUA + HyriLaserGame.getLanguageManager().getValue(player, "game.starting-in") + " ";
+                        String msg = ChatColor.DARK_AQUA + HyriLanguageMessage.get("game.starting-in").getValue(player) + " ";
                         switch (i){ //TODO refaire ce code foireux
                             case 3:
                                 text = ChatColor.YELLOW + "" + i;
@@ -158,7 +163,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                                             kickPlayersInBase(team.getFirstPointBaseArea(), team.getSecondPointBaseArea(), team.getSpawnCloseDoorLocation());
                                             players.forEach(player -> {
                                                 player.getPlayer().setExp(1.0F);
-                                                new ActionBar(ChatColor.GREEN + HyriLaserGame.getLanguageManager().getValue(player.getPlayer(), "player.death.subtitle.good")).send(player.getPlayer());
+                                                new ActionBar(ChatColor.GREEN + HyriLanguageMessage.get("player.death.subtitle.good").getValue(player.getPlayer())).send(player.getPlayer());
                                             });
                                             ((LGLaserGun)hyrame.getItemManager().getItem(LGLaserGun.class)).setEnable(true);
                                         }
@@ -166,7 +171,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                                     cancel();
                                     return;
                                 }
-                                players.forEach(player -> new ActionBar(ChatColor.GREEN + HyriLaserGame.getLanguageManager().getValue(player.getPlayer(), "game.timer.can-shoot") + " " + i + "s").send(player.getPlayer()));
+                                players.forEach(player -> new ActionBar(ChatColor.GREEN + HyriLanguageMessage.get("game.timer.can-shoot").getValue(player.getPlayer()) + " " + i + "s").send(player.getPlayer()));
                                 --i;
                             }
                         }.runTaskTimer(plugin, 0, 20);
@@ -198,38 +203,9 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     @Override
     public void handleLogin(Player p) {
-//        super.handleLogin(p);
+        System.out.println("Login");
+        super.handleLogin(p);
 
-        try {
-            if (this.getState() == HyriGameState.WAITING || this.getState() == HyriGameState.READY) {
-                if (!this.isFull()) {
-                    final LGGamePlayer player = LGGamePlayer.class.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
-
-                    this.players.add(player);
-
-//                    this.updatePlayerCount();
-
-                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
-
-                    if (this.usingGameTabList) {
-                        this.tabListManager.handleLogin(p);
-                    }
-                }
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            p.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
-            HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
-            e.printStackTrace();
-        }
-
-        p.getInventory().setArmorContents(null);
-        p.getInventory().clear();
-        p.setGameMode(GameMode.ADVENTURE);
-        p.setFoodLevel(20);
-        p.setHealth(20);
-        p.setLevel(0);
-        p.setExp(0.0F);
-        p.setCanPickupItems(false);
         p.teleport(this.plugin.getConfiguration().getWaitingRoom().getWaitingSpawn());
 
         this.getPlayer(p.getUniqueId()).setPlugin(this.plugin);
@@ -238,8 +214,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     @Override
     public void handleLogout(Player p) {
         super.handleLogout(p);
-        if(this.getState() != HyriGameState.PLAYING) return;
-        if(this.isStarted){
+        if(this.getState() == HyriGameState.PLAYING && this.isStarted) {
             if(this.players.isEmpty()) {
                 this.win(this.getWinner());
             } else {
@@ -256,19 +231,56 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     public void win(HyriGameTeam winner) {
         super.win(winner);
         System.out.println("Game down");
-        this.getWinner().getPlayers().forEach(player -> {
-            HyriLGPlayer pl = this.getPlayer(player.getUUID()).getAccount();
+        this.players.forEach(gamePlayer -> {
+            if(winner.contains(gamePlayer)){
+                final HyriLGPlayer pl = gamePlayer.getAccount();
 
-            pl.setCurrentWinStreak(pl.getCurrentWinStreak() + 1);
-            pl.setBestWinStreak(pl.getBestWinStreak() + 1);
-            pl.update((LGGamePlayer) player);
-        });
-        this.players.forEach(player -> {
-            player.setSpectator(true);
-            giveResultMap(player.getPlayer());
+                pl.setCurrentWinStreak(pl.getCurrentWinStreak() + 1);
+                pl.setBestWinStreak(pl.getBestWinStreak() + 1);
+                pl.update(gamePlayer);
+            }
 
-            HyriLGPlayer pl = this.getPlayer(player.getUUID()).getAccount();
-            pl.update(player);
+            final Player player = gamePlayer.getPlayer();
+            final List<String> killsLines = new ArrayList<>();
+            final List<LGGamePlayer> topKillers = new ArrayList<>(this.players);
+
+            topKillers.sort((o1, o2) -> o2.getAllPoints() - o1.getAllPoints());
+
+            for (int i = 0; i <= 2 && topKillers.size() > i; i++) {
+                final LGGamePlayer endPlayer = topKillers.get(i);
+                final String line = HyriLanguageMessage.get("message.game.end.kills").getValue(player).replace("%position%", HyriLanguageMessage.get("message.game.end." + (i + 1)).getValue(player));
+
+                if (endPlayer == null) {
+                    killsLines.add(line.replace("%player%", HyriLanguageMessage.get("message.game.end.nobody").getValue(player))
+                            .replace("%kills%", "0"));
+                    continue;
+                }
+
+                killsLines.add(line.replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(endPlayer.getUniqueId()).getNameWithRank(true))
+                        .replace("%kills%", String.valueOf(endPlayer.getAllPoints())));
+            }
+
+            final int kills = gamePlayer.getKills();
+            final boolean isWinner = winner.contains(gamePlayer);
+
+            final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayedTime(), isWinner);
+            final long xp = HyriRewardAlgorithm.getXP(kills, gamePlayer.getPlayedTime(), isWinner);
+            final List<String> rewards = new ArrayList<>();
+
+            rewards.add(ChatColor.LIGHT_PURPLE + String.valueOf(hyris) + " Hyris");
+            rewards.add(ChatColor.GREEN + String.valueOf(xp) + " XP");
+
+            IHyriPlayer p = HyriAPI.get().getPlayerManager().getPlayer(gamePlayer.getUniqueId());
+
+            p.getHyris().add(hyris).withMessage(false).exec();
+            p.getNetworkLeveling().addExperience(xp);
+
+            p.update();
+
+            player.spigot().sendMessage(HyriGameMessages.createWinMessage(this, player, winner, killsLines, rewards));
+
+            gamePlayer.setSpectator(true);
+            giveResultMap(player);
         });
     }
 
@@ -278,7 +290,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         map.setScale(MapView.Scale.FARTHEST);
         map.removeRenderer(map.getRenderers().get(0));
         map.addRenderer(new LGMapRendererWin(this.plugin));
-        player.getInventory().setItem(7, new ItemBuilder(new ItemStack(Material.MAP, 1, map.getId())).withName(ChatColor.YELLOW + HyriLaserGame.getLanguageManager().getValue(player, "map.name")).build());
+        player.getInventory().setItem(7, new ItemBuilder(new ItemStack(Material.MAP, 1, map.getId())).withName(ChatColor.YELLOW + HyriLanguageMessage.get("map.name").getValue(player)).build());
         player.getInventory().setHeldItemSlot(7);
     }
 
@@ -318,10 +330,14 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         int pointsTeam = 0;
 
         for(HyriGamePlayer player : team.getPlayers()){
-            pointsTeam += this.getPlayer(player.getUUID()).getAllPoints();
+            pointsTeam += this.getPlayer(player.getPlayer()).getAllPoints();
         }
 
         return pointsTeam;
+    }
+
+    public List<LGGameTeam> getLGTeams(){
+        return this.teams.stream().map(team -> (LGGameTeam) team).collect(Collectors.toList());
     }
 
     private void kickPlayersInBase(Location locFirst, Location locSecond, Location spawnLoc) {
@@ -334,9 +350,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     }
 
     private HyriGameTeam createTeam(ELGGameTeam gameTeam){
-        final LGGameTeam team = new LGGameTeam(this, this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
-        team.setSpawnLocation(this.plugin.getConfiguration().getTeam(gameTeam.getName()).getSpawnLocation());
-        return team;
+        return new LGGameTeam(this, this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
     }
 
     private void doorAnimationOpen(Location locFirst, Location locSecond, BlockState blockk){
