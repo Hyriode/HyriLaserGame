@@ -5,6 +5,7 @@
   "red.display": "Rouge",
 
   "item.lasergun": "&4Pistolet Laser",
+  "lore.lasergun": "&7Tirez sur vos ennemis",
 
   "player.death.title": "&cVous êtes mort!",
   "player.death.subtitle": "&cVous pourrez tirer dans %ss",

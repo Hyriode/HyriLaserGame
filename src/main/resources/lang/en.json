@@ -5,6 +5,7 @@
   "red.display": "Red",
 
   "item.lasergun": "&4Laser Gun",
+  "lore.lasergun": "Shoot on everyone",
 
   "player.death.title": "&cYou are dead!",
   "player.death.subtitle": "&cYou will be able to shoot in %ss",

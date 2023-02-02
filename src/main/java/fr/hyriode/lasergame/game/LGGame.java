@@ -36,9 +36,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LGGame extends HyriGame<LGGamePlayer> {
@@ -63,7 +61,6 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
         for (ELGGameTeam team : ELGGameTeam.values())
             this.registerTeam(this.createTeam(team));
-
     }
 
     @Override
@@ -256,15 +253,15 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                     continue;
                 }
 
-                killsLines.add(line.replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(endPlayer.getUniqueId()).getNameWithRank(true))
+                killsLines.add(line.replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(endPlayer.getUniqueId()).getNameWithRank())
                         .replace("%kills%", String.valueOf(endPlayer.getAllPoints())));
             }
 
             final int kills = gamePlayer.getKills();
             final boolean isWinner = winner.contains(gamePlayer);
 
-            final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayedTime(), isWinner);
-            final long xp = HyriRewardAlgorithm.getXP(kills, gamePlayer.getPlayedTime(), isWinner);
+            final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayTime(), isWinner);
+            final double xp = HyriRewardAlgorithm.getXP(kills, gamePlayer.getPlayTime(), isWinner);
             final List<String> rewards = new ArrayList<>();
 
             rewards.add(ChatColor.LIGHT_PURPLE + String.valueOf(hyris) + " Hyris");
@@ -350,7 +347,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     }
 
     private HyriGameTeam createTeam(ELGGameTeam gameTeam){
-        return new LGGameTeam(this, this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
+        return new LGGameTeam(this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
     }
 
     private void doorAnimationOpen(Location locFirst, Location locSecond, BlockState blockk){

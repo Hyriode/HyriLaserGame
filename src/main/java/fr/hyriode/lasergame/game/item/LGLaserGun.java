@@ -37,7 +37,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
     private boolean enable;
 
     public LGLaserGun(HyriLaserGame plugin) {
-        super(plugin, "lasergun", () -> HyriLanguageMessage.get("item.lasergun"), ArrayList::new, Material.IRON_HOE);
+        super(plugin, "lasergun", () -> HyriLanguageMessage.get("item.lasergun"), () -> HyriLanguageMessage.get("lore.lasergun"), Material.IRON_HOE);
         this.enable = false;
     }
 

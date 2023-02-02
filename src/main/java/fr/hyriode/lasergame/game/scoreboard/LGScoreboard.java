@@ -3,7 +3,6 @@ package fr.hyriode.lasergame.game.scoreboard;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.scoreboard.HyriGameScoreboard;
-import fr.hyriode.hyrame.game.scoreboard.HyriScoreboardIpConsumer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.lasergame.HyriLaserGame;
@@ -30,15 +29,15 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
         this.timeOriginSecond = plugin.getConfiguration().getTimeSecond();
 
         this.setLine(0, this.getDateLine(), scoreboardLine -> scoreboardLine.setValue(this.getDateLine()), 20);
-        this.setLine(1, "  ");
+        this.addBlankLine(1);
         this.setLine(2, this.getTeamLine());
         this.setLine(3, this.getTimeLine(), line -> line.setValue(this.getTimeLine()), 20);
         this.setLine(4, this.getBonusLine(), line -> line.setValue(this.getBonusLine()), 1);
-        this.setLine(5, "   ");
+        this.addBlankLine(5);
         this.setLine(6, this.getPointsLine(), line -> line.setValue(this.getPointsLine()), 2);
         this.setLine(7, this.getPointsAdverseLine(), line -> line.setValue(this.getPointsAdverseLine()), 2);
-        this.setLine(8, "    ");
-        this.setLine(9, ChatColor.DARK_AQUA + "hyriode.fr", new HyriScoreboardIpConsumer("hyriode.fr"), 2);
+        this.addBlankLine(8);
+        this.addHostnameLine();
     }
 
     private String getTeamLine(){

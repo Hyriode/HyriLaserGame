@@ -11,8 +11,8 @@ public class LGGameTeam extends HyriGameTeam {
 
     private final HyriLaserGame plugin;
 
-    public LGGameTeam(HyriGame<?> game, HyriLaserGame plugin, ELGGameTeam color, int teamSize) {
-        super(game, color.getName(), color.getDisplayName().get(), color.getColor(), false, HyriScoreboardTeam.NameTagVisibility.NEVER, teamSize);
+    public LGGameTeam(HyriLaserGame plugin, ELGGameTeam color, int teamSize) {
+        super(color.getName(), color.getDisplayName().get(), color.getColor(), false, HyriScoreboardTeam.NameTagVisibility.NEVER, teamSize);
         this.plugin = plugin;
         this.initConfig();
     }

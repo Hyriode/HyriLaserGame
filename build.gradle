@@ -31,8 +31,8 @@ repositories {
         url = 'https://maven.pkg.github.com/Hyriode/Hyrame/'
 
         credentials {
-            username System.getenv("GITHUB_USERNAME")
-            password System.getenv("GITHUB_TOKEN")
+            username System.getenv("USERNAME")
+            password System.getenv("TOKEN")
         }
     }
 }
@@ -40,7 +40,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     shadow 'xyz.xenondevs:particle:1.7'
-    implementation 'fr.hyriode:hyrame:1.3.4'
+    implementation 'fr.hyriode:hyrame:1.3.5'
 }
 
 processResources {
@@ -60,10 +60,11 @@ shadowJar {
 }
 
 task deploy(dependsOn: shadowJar) {
+    //delete "H:/Dev/dev Mc/Serveurs/hyriode/HyriLaserGame/plugins/HyriLaserGame-1.0.0-all.jar"
     doLast {
         copy {
             from "$buildDir/libs/HyriLaserGame-1.0.0-all.jar"
-            into "$buildDir/libs/TestServeur/plugins"
+            into "H:/Dev/dev Mc/Serveurs/hyriode/HyriLaserGame/plugins"
         }
     }
 }

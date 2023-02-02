@@ -2,6 +2,7 @@ package fr.hyriode.lasergame;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.server.IHyriServer;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.utils.LocationWrapper;
@@ -85,7 +86,7 @@ public class HyriLaserGame extends JavaPlugin {
                                   new LocationWrapper(-3.5, 145, -17.5)
                           ), Arrays.asList(
 
-                           ), 20, false, 30);
+                           ), 20, false, 60*5);
 //                          , "lasergame", LGGameType.FIVE_FIVE.getName(), "Nexus").whenComplete((aBoolean, throwable) -> System.out.println("ui " + aBoolean));//, "lasergame", LGGameType.FIVE_FIVE.getName(), "Evolution").whenComplete((aBoolean, throwable) -> System.out.println(aBoolean));
 ////            HyriAPI.get().getServer().setSlots(50);
         }
@@ -103,7 +104,7 @@ public class HyriLaserGame extends JavaPlugin {
             e.printStackTrace();
         }
 
-        HyriAPI.get().getServer().setState(IHyriServer.State.READY);
+        HyriAPI.get().getServer().setState(HyggServer.State.READY);
     }
 
     @Override

@@ -89,7 +89,7 @@ public class HyriLGPlayer extends HyriPlayerData {
 
     public void update(LGGamePlayer gamePlayer) {
         IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(gamePlayer.getUniqueId());
-        this.addPlayedTime(gamePlayer.getPlayedTime());
+        this.addPlayedTime(gamePlayer.getPlayTime());
         this.addKills(gamePlayer.getKills());
         this.addDeaths(gamePlayer.getDeaths());
         this.setBestKillStreak(gamePlayer.getDeaths());

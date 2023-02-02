@@ -47,8 +47,8 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     private int killStreak;
 
-    public LGGamePlayer(HyriGame<?> game, Player player) {
-        super(game, player);
+    public LGGamePlayer(Player player) {
+        super(player);
     }
 
     public LGGamePlayer setPlugin(HyriLaserGame plugin) {
@@ -98,7 +98,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.player.sendMessage(HyriLanguageMessage.get("player.death.title").getValue(this.player));
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
-            if(this.game.getState() != HyriGameState.ENDED) {
+            if(this.plugin.getGame().getState() != HyriGameState.ENDED) {
                 this.setNotDead();
                 this.playReviveSound(player);
                 this.giveArmor();
@@ -115,12 +115,12 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     public void giveArmor(){
-        giveArmor(this.team.getColor().getDyeColor().getColor());
+        giveArmor(this.getTeam().getColor().getDyeColor().getColor());
     }
 
     public void giveInverseArmor(){
         this.giveArmor(this.plugin.getGame().getTeams().stream()
-                .filter(hyriGameTeam -> hyriGameTeam.getColor() != team.getColor()).collect(Collectors.toList()).get(0)
+                .filter(hyriGameTeam -> hyriGameTeam.getColor() != this.getTeam().getColor()).collect(Collectors.toList()).get(0)
                 .getColor().getDyeColor().getColor());
     }
 
