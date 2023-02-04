@@ -1,17 +1,15 @@
 package fr.hyriode.lasergame.game.player;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.actionbar.ActionBar;
-import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.item.ItemNBT;
-import fr.hyriode.hyrame.title.Title;
+import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.api.player.HyriLGPlayer;
 import fr.hyriode.lasergame.game.bonus.LGBonus;
@@ -22,12 +20,9 @@ import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -67,51 +62,22 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     public void kill(){
-        int timeDeath = 5;
-
+        this.player.teleport(this.getRandomSpawn());
         this.giveDeathArmor();
-        this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * timeDeath, 1, true, true));
         this.player.playSound(this.player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
         this.setDead(HyriGameDeathEvent.Reason.PLAYERS, new ArrayList<>());
-
-        final HyriLanguageMessage dead = new HyriLanguageMessage("")
-                .addValue(HyriLanguage.EN, "DEAD")
-                .addValue(HyriLanguage.FR, "MORT");
-
-        new BukkitRunnable(){
-            int i = timeDeath;
-            @Override
-            public void run() {
-                if(plugin.getGame().getState() != HyriGameState.ENDED) {
-                    if (i == 0) {
-                        Title.sendTitle(player, " ", null, 1, 1, 1);
-                        new ActionBar(String.format(HyriLanguageMessage.get("player.death.subtitle.good").getValue(player), i)).send(player);
-                        this.cancel();
-                        return;
-                    }
-                    Title.sendTitle(player, ChatColor.RED + " " + dead.getValue(player), String.format(HyriLanguageMessage.get("player.death.subtitle").getValue(player), i), 1, 20, 1);
-                    --i;
-                }else this.cancel();
-            }
-        }.runTaskTimer(this.plugin, 0L, 20L);
-
         this.player.sendMessage(HyriLanguageMessage.get("player.death.title").getValue(this.player));
-
-        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
-            if(this.plugin.getGame().getState() != HyriGameState.ENDED) {
-                this.setNotDead();
-                this.playReviveSound(player);
-                this.giveArmor();
-            }
-        }, 20L * timeDeath);
     }
 
-    public void playReviveSound(final Player player) {
-        for (int i = 0; i < 5; i++) {
-            float volume = 0.5F + i * 0.2F;
-            int ticks = i * 3;
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> player.playSound(player.getLocation(), Sound.DRINK, 1, volume), ticks);
-        }
+    private Location getRandomSpawn() {
+        final List<LocationWrapper> spawns = this.plugin.getConfiguration().getSpawnLocations();
+        return spawns.get(ThreadLocalRandom.current().nextInt(spawns.size())).asBukkit();
+    }
+
+    public void respawn() {
+        new ActionBar(HyriLanguageMessage.get("player.death.subtitle.good").getValue(player)).send(player);
+        this.giveArmor();
+        this.setNotDead();
     }
 
     public void giveArmor(){
