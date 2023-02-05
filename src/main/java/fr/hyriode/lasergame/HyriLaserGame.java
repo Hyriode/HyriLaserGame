@@ -1,7 +1,6 @@
 package fr.hyriode.lasergame;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
@@ -11,10 +10,10 @@ import fr.hyriode.lasergame.game.LGGame;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.logging.Level;
@@ -33,112 +32,112 @@ public class HyriLaserGame extends JavaPlugin {
     public void onEnable() {
         this.getLogger().log(Level.INFO, "Starting " + this.getClass().getSimpleName() + "...");
 
-        if(!HyriAPI.get().getConfig().isDevEnvironment()){
+        if (!HyriAPI.get().getConfig().isDevEnvironment()) {
             this.configuration = HyriAPI.get().getServer().getConfig(LGConfiguration.class);
-        }else {
+        } else {
 //            HyriAPI.get().getHystiaAPI().getWorldManager().saveWorld("lasergame", LGGameType.FIVE_FIVE.getName(), "Evolution").whenComplete((aBoolean, throwable) -> System.out.println("world: " + aBoolean));
 //            HyriAPI.get().getHystiaAPI().getConfigManager().saveConfig(
 //                   HyriAPI.get().getHystiaAPI().getConfigManager().saveConfig(
-                           this.configuration = new LGConfiguration(Arrays.asList(
-                                  new LGConfiguration.Team(
-                                          "red",
-                                          Arrays.asList(
-                                                  new LGConfiguration.Door(
-                                                          new LocationWrapper(-60, 146, -6),
-                                                          new LocationWrapper(-62, 144, -6)
-                                                  ),
-                                                  new LGConfiguration.Door(
-                                                          new LocationWrapper(-60, 146, 8),
-                                                          new LocationWrapper(-62, 144, 8)
-                                                  )
-                                          ),
-                                          new LocationWrapper(-63, 147, -6), //first area
-                                          new LocationWrapper(-51, 143, 8), //second area
-                                          new LocationWrapper(-53.5, 146, 1.5, 90, 0), //spawn loc
-                                          new LocationWrapper(-48.5, 146, 1.5, -90, 0) //spawn close
-                                  ),
-                                  new LGConfiguration.Team(
-                                          "blue",
-                                          Arrays.asList(
-                                                  new LGConfiguration.Door(
-                                                          new LocationWrapper(52, 146, -6),
-                                                          new LocationWrapper(54, 144, -6)
-                                                  ),
-                                                  new LGConfiguration.Door(
-                                                          new LocationWrapper(54, 146, 8),
-                                                          new LocationWrapper(52, 144, 8)
-                                                  )
-                                          ), //doors
-                                          new LocationWrapper(54, 147, 8), //first area
-                                          new LocationWrapper(43, 143, -6), //second area
-                                          new LocationWrapper(46.5, 146, 1.5, -90, 0), //spawn loc
-                                          new LocationWrapper(41.5, 146, 1.5, 90, 0) //spawn close
-                                  )
-                          ), new LGConfiguration.WaitingRoom(
-                                  new LocationWrapper(-0.5, 160, -1000.5, -90, 0),
-                                  new LocationWrapper(21, 175, -1016),
-                                  new LocationWrapper(-15, 159, -985)
-                          ), Arrays.asList(
-                                  new LocationWrapper(-3.5, 145, -3.5),
-                                  new LocationWrapper(-3.5, 145, 6.5),
-                                  new LocationWrapper(-3.5, 150, 1.5),
-                                  new LocationWrapper(-3.5, 145, 20.5),
-                                  new LocationWrapper(-3.5, 145, -17.5)
-                          ), Arrays.asList(
-                                  new LocationWrapper(-45.5, 145, -8.5, 90, 0),
-                                  new LocationWrapper(-51.5, 145, -8.5),
-                                  new LocationWrapper(-55.5, 145, -6.5, 180, 0),
-                                  new LocationWrapper(-61.5, 145, -6.5, -90, 0),
-                                  new LocationWrapper(-55.5, 145, -8.5, -90, 0),
-                                  new LocationWrapper(-55.5, 145, -29.5),
-                                  new LocationWrapper(-53.5, 145, -6.5),
-                                  new LocationWrapper(-41.5, 145, -35.5, -90, 0),
-                                  new LocationWrapper(-40.5, 145, -36.5),
-                                  new LocationWrapper(-55.5, 145, -6.5),
-                                  new LocationWrapper(-25.5, 145, -35.5, 90, 0),
-                                  new LocationWrapper(-41.5, 145, -21.5, -90, 0),
-                                  new LocationWrapper(-40.5, 145, -20.5, 180, 0),
-                                  new LocationWrapper(-36.5, 145, -7.5),
-                                  new LocationWrapper(-21.5, 145, -18.5),
-                                  new LocationWrapper(-12.5, 145, -11.5, 180, 0),
-                                  new LocationWrapper(5.5, 145, -11.5, 180, 0),
-                                  new LocationWrapper(7.5, 145, -9.5, -135, 0),
-                                  new LocationWrapper(15.5, 145, -13.5),
-                                  new LocationWrapper(20.5, 145, -3.5, 90, 0),
-                                  new LocationWrapper(20.5, 145, 6.5, 90, 0),
-                                  new LocationWrapper(15.5, 145, 16.5, 180, 0),
-                                  new LocationWrapper(12.5, 145, 12.5),
-                                  new LocationWrapper(7.5, 145, 12.5, -45, 0),
-                                  new LocationWrapper(11.5, 145, 20.5, 90, 0),
-                                  new LocationWrapper(-18.5, 145, 20.5, -90, 0),
-                                  new LocationWrapper(-12.5, 145, 14.5),
-                                  new LocationWrapper(-14.5, 145, 12.5, 45, 0),
-                                  new LocationWrapper(-22.5, 145, 16.5, 180, 0),
-                                  new LocationWrapper(-22.5, 145, -13.5),
-                                  new LocationWrapper(-14.5, 145, -9.5, 135, 0),
-                                  new LocationWrapper(-10.5, 150, -12.5, 90, 0),
-                                  new LocationWrapper(5.5, 150, -11.5, -90, 0),
-                                  new LocationWrapper(3.5, 150, 15.5, -90, 0),
-                                  new LocationWrapper(-12.5, 150, 14.5, 90, 0),
-                                  new LocationWrapper(0.5, 146, -5.5),
-                                  new LocationWrapper(-6.5, 146, -5.5),
-                                  new LocationWrapper(-6.5, 146, 8.5, 180, 0),
-                                  new LocationWrapper(-0.5, 146, 8.5, 180, 0),
-                                  new LocationWrapper(-33.5, 145, 0.5),
-                                  new LocationWrapper(-41.5, 145, 2.5, 180, 0),
-                                  new LocationWrapper(-45.5, 145, -5.5),
-                                  new LocationWrapper(-45.5, 145, -8.5),
-                                  new LocationWrapper(-51.5, 145, 11.5),
-                                  new LocationWrapper(-55.5, 145, 9.5),
-                                  new LocationWrapper(-51.5, 145, 30.5),
-                                  new LocationWrapper(-41.5, 145, 24.5, -90, 0),
-                                  new LocationWrapper(-41.5, 145, 38.5, -90, 0),
-                                  new LocationWrapper(-40.5, 145, 39.5, 180, 0),
-                                  new LocationWrapper(-40.5, 145, 23.5),
-                                  new LocationWrapper(-26.5, 145, 39.5, 180, 0),
-                                  new LocationWrapper(-25.5, 145, 38.5, 90, 0)
-                                  //TODO: add more (j'en peux plus)
-                           ), 20, false, 60*5);
+            this.configuration = new LGConfiguration(Arrays.asList(
+                    new LGConfiguration.Team(
+                            "red",
+                            Arrays.asList(
+                                    new LGConfiguration.Door(
+                                            new LocationWrapper(-60, 146, -6),
+                                            new LocationWrapper(-62, 144, -6)
+                                    ),
+                                    new LGConfiguration.Door(
+                                            new LocationWrapper(-60, 146, 8),
+                                            new LocationWrapper(-62, 144, 8)
+                                    )
+                            ),
+                            new LocationWrapper(-63, 147, -6), //first area
+                            new LocationWrapper(-51, 143, 8), //second area
+                            new LocationWrapper(-53.5, 146, 1.5, 90, 0), //spawn loc
+                            new LocationWrapper(-48.5, 146, 1.5, -90, 0) //spawn close
+                    ),
+                    new LGConfiguration.Team(
+                            "blue",
+                            Arrays.asList(
+                                    new LGConfiguration.Door(
+                                            new LocationWrapper(52, 146, -6),
+                                            new LocationWrapper(54, 144, -6)
+                                    ),
+                                    new LGConfiguration.Door(
+                                            new LocationWrapper(54, 146, 8),
+                                            new LocationWrapper(52, 144, 8)
+                                    )
+                            ), //doors
+                            new LocationWrapper(54, 147, 8), //first area
+                            new LocationWrapper(43, 143, -6), //second area
+                            new LocationWrapper(46.5, 146, 1.5, -90, 0), //spawn loc
+                            new LocationWrapper(41.5, 146, 1.5, 90, 0) //spawn close
+                    )
+            ), new LGConfiguration.WaitingRoom(
+                    new LocationWrapper(-0.5, 160, -1000.5, -90, 0),
+                    new LocationWrapper(21, 175, -1016),
+                    new LocationWrapper(-15, 159, -985)
+            ), Arrays.asList(
+                    new LocationWrapper(-3.5, 145, -3.5),
+                    new LocationWrapper(-3.5, 145, 6.5),
+                    new LocationWrapper(-3.5, 150, 1.5),
+                    new LocationWrapper(-3.5, 145, 20.5),
+                    new LocationWrapper(-3.5, 145, -17.5)
+            ), Arrays.asList(
+                    new LocationWrapper(-45.5, 145, -8.5, 90, 0),
+                    new LocationWrapper(-51.5, 145, -8.5),
+                    new LocationWrapper(-55.5, 145, -6.5, 180, 0),
+                    new LocationWrapper(-61.5, 145, -6.5, -90, 0),
+                    new LocationWrapper(-55.5, 145, -8.5, -90, 0),
+                    new LocationWrapper(-55.5, 145, -29.5),
+                    new LocationWrapper(-53.5, 145, -6.5),
+                    new LocationWrapper(-41.5, 145, -35.5, -90, 0),
+                    new LocationWrapper(-40.5, 145, -36.5),
+                    new LocationWrapper(-55.5, 145, -6.5),
+                    new LocationWrapper(-25.5, 145, -35.5, 90, 0),
+                    new LocationWrapper(-41.5, 145, -21.5, -90, 0),
+                    new LocationWrapper(-40.5, 145, -20.5, 180, 0),
+                    new LocationWrapper(-36.5, 145, -7.5),
+                    new LocationWrapper(-21.5, 145, -18.5),
+                    new LocationWrapper(-12.5, 145, -11.5, 180, 0),
+                    new LocationWrapper(5.5, 145, -11.5, 180, 0),
+                    new LocationWrapper(7.5, 145, -9.5, -135, 0),
+                    new LocationWrapper(15.5, 145, -13.5),
+                    new LocationWrapper(20.5, 145, -3.5, 90, 0),
+                    new LocationWrapper(20.5, 145, 6.5, 90, 0),
+                    new LocationWrapper(15.5, 145, 16.5, 180, 0),
+                    new LocationWrapper(12.5, 145, 12.5),
+                    new LocationWrapper(7.5, 145, 12.5, -45, 0),
+                    new LocationWrapper(11.5, 145, 20.5, 90, 0),
+                    new LocationWrapper(-18.5, 145, 20.5, -90, 0),
+                    new LocationWrapper(-12.5, 145, 14.5),
+                    new LocationWrapper(-14.5, 145, 12.5, 45, 0),
+                    new LocationWrapper(-22.5, 145, 16.5, 180, 0),
+                    new LocationWrapper(-22.5, 145, -13.5),
+                    new LocationWrapper(-14.5, 145, -9.5, 135, 0),
+                    new LocationWrapper(-10.5, 150, -12.5, 90, 0),
+                    new LocationWrapper(5.5, 150, -11.5, -90, 0),
+                    new LocationWrapper(3.5, 150, 15.5, -90, 0),
+                    new LocationWrapper(-12.5, 150, 14.5, 90, 0),
+                    new LocationWrapper(0.5, 146, -5.5),
+                    new LocationWrapper(-6.5, 146, -5.5),
+                    new LocationWrapper(-6.5, 146, 8.5, 180, 0),
+                    new LocationWrapper(-0.5, 146, 8.5, 180, 0),
+                    new LocationWrapper(-33.5, 145, 0.5),
+                    new LocationWrapper(-41.5, 145, 2.5, 180, 0),
+                    new LocationWrapper(-45.5, 145, -5.5),
+                    new LocationWrapper(-45.5, 145, -8.5),
+                    new LocationWrapper(-51.5, 145, 11.5),
+                    new LocationWrapper(-55.5, 145, 9.5),
+                    new LocationWrapper(-51.5, 145, 30.5),
+                    new LocationWrapper(-41.5, 145, 24.5, -90, 0),
+                    new LocationWrapper(-41.5, 145, 38.5, -90, 0),
+                    new LocationWrapper(-40.5, 145, 39.5, 180, 0),
+                    new LocationWrapper(-40.5, 145, 23.5),
+                    new LocationWrapper(-26.5, 145, 39.5, 180, 0),
+                    new LocationWrapper(-25.5, 145, 38.5, 90, 0)
+                    //TODO: add more (j'en peux plus)
+            ), 20, false, 60 * 5);
 //                          , "lasergame", LGGameType.FIVE_FIVE.getName(), "Nexus").whenComplete((aBoolean, throwable) -> System.out.println("ui " + aBoolean));//, "lasergame", LGGameType.FIVE_FIVE.getName(), "Evolution").whenComplete((aBoolean, throwable) -> System.out.println(aBoolean));
 ////            HyriAPI.get().getServer().setSlots(50);
         }

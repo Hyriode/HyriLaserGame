@@ -1,4 +1,4 @@
 name: HyriLaserGame
 main: fr.hyriode.lasergame.HyriLaserGame
 version: 1.0.0
-depend: [Hyrame]
+depend: [ Hyrame ]

@@ -18,7 +18,6 @@ import fr.hyriode.hyrame.utils.Area;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.api.player.HyriLGPlayer;
 import fr.hyriode.lasergame.game.bonus.LGBonus;
-import fr.hyriode.lasergame.game.bonus.effect.SphereEffect;
 import fr.hyriode.lasergame.game.item.LGLaserGun;
 import fr.hyriode.lasergame.game.map.LGMapRendererWin;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
@@ -28,7 +27,9 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftFallingSand;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
@@ -36,7 +37,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class LGGame extends HyriGame<LGGamePlayer> {
@@ -87,7 +90,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
             player.setScoreboard(scoreboard);
             scoreboard.show();
 
-            p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999 * 20, 0));
 
             player.cleanPlayer();
             player.giveGun();
@@ -96,20 +99,21 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
         this.getLGTeams().forEach(LGGameTeam::teleportToSpawn);
 
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             int i = 10;
+
             @Override
             public void run() {
-                if(getState() == HyriGameState.ENDED){
+                if (getState() == HyriGameState.ENDED) {
                     this.cancel();
                     return;
                 }
-                if(i >= 0){
+                if (i >= 0) {
                     players.forEach(p -> {
                         Player player = p.getPlayer();
                         String text = ChatColor.AQUA + "" + i;
                         String msg = ChatColor.DARK_AQUA + HyriLanguageMessage.get("game.starting-in").getValue(player) + " ";
-                        switch (i){ //TODO refaire ce code foireux
+                        switch (i) { //TODO refaire ce code foireux
                             case 3:
                                 text = ChatColor.YELLOW + "" + i;
                                 player.sendMessage(msg + text + ChatColor.DARK_AQUA + " seconds");
@@ -141,17 +145,17 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                         }
                     });
                     --i;
-                }else {
+                } else {
                     plugin.getConfiguration().getTeams().forEach((team) -> {
                         Location locFirstDoorFirst = team.getDoors().get(0).getFirstPointDoor();
                         Location locSecondDoorFirst = team.getDoors().get(0).getSecondPointDoor();
                         BlockState block = locFirstDoorFirst.clone().getBlock().getState();
-                        new BukkitRunnable(){
+                        new BukkitRunnable() {
                             int i = 5;
 
                             @Override
                             public void run() {
-                                if(i <= 0){
+                                if (i <= 0) {
                                     doorAnimationClose(locFirstDoorFirst, locSecondDoorFirst, block);
                                     plugin.getGame().setState(HyriGameState.PLAYING);
                                     new BukkitRunnable() {
@@ -162,7 +166,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                                                 player.getPlayer().setExp(1.0F);
                                                 new ActionBar(ChatColor.GREEN + HyriLanguageMessage.get("player.death.subtitle.good").getValue(player.getPlayer())).send(player.getPlayer());
                                             });
-                                            ((LGLaserGun)hyrame.getItemManager().getItem(LGLaserGun.class)).setEnable(true);
+                                            ((LGLaserGun) hyrame.getItemManager().getItem(LGLaserGun.class)).setEnable(true);
                                         }
                                     }.runTaskLater(plugin, 20L);
                                     cancel();
@@ -174,7 +178,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                         }.runTaskTimer(plugin, 0, 20);
                         doorAnimationOpen(locFirstDoorFirst, locSecondDoorFirst, block);
 
-                        if(team.getDoors().size() > 1) {
+                        if (team.getDoors().size() > 1) {
                             Location locFirstDoorSecond = team.getDoors().get(1).getFirstPointDoor();
                             Location locSecondDoorSecond = team.getDoors().get(1).getSecondPointDoor();
 
@@ -211,8 +215,8 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     @Override
     public void handleLogout(Player p) {
         super.handleLogout(p);
-        if(this.getState() == HyriGameState.PLAYING && this.isStarted) {
-            if(this.players.isEmpty()) {
+        if (this.getState() == HyriGameState.PLAYING && this.isStarted) {
+            if (this.players.isEmpty()) {
                 this.win(this.getWinner());
             } else {
                 for (HyriGameTeam team : this.teams) {
@@ -229,7 +233,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         super.win(winner);
         System.out.println("Game down");
         this.players.forEach(gamePlayer -> {
-            if(winner.contains(gamePlayer)){
+            if (winner.contains(gamePlayer)) {
                 final HyriLGPlayer pl = gamePlayer.getAccount();
 
                 pl.setCurrentWinStreak(pl.getCurrentWinStreak() + 1);
@@ -282,7 +286,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     }
 
     @SuppressWarnings("deprecation")
-    private void giveResultMap(Player player){
+    private void giveResultMap(Player player) {
         final MapView map = Bukkit.createMap(player.getWorld());
         map.setScale(MapView.Scale.FARTHEST);
         map.removeRenderer(map.getRenderers().get(0));
@@ -291,22 +295,22 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         player.getInventory().setHeldItemSlot(7);
     }
 
-    public boolean hasSamePoints(){
+    public boolean hasSamePoints() {
         return this.getTeamPoints(this.getWinner()) == this.getTeamPoints(this.getLooser());
     }
 
-    public HyriGameTeam getWinner(boolean isWinner){
+    public HyriGameTeam getWinner(boolean isWinner) {
         HyriGameTeam gameTeam = null;
-        for(HyriGameTeam team : this.teams){
-            if(gameTeam == null){
+        for (HyriGameTeam team : this.teams) {
+            if (gameTeam == null) {
                 gameTeam = team;
-            }else{
-                if(isWinner) {
+            } else {
+                if (isWinner) {
                     if (this.getTeamPoints(team) > this.getTeamPoints(gameTeam)) {
                         gameTeam = team;
                     }
-                }else{
-                    if(this.getTeamPoints(team) < this.getTeamPoints(gameTeam)){
+                } else {
+                    if (this.getTeamPoints(team) < this.getTeamPoints(gameTeam)) {
                         gameTeam = team;
                     }
                 }
@@ -315,42 +319,42 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         return gameTeam;
     }
 
-    public HyriGameTeam getWinner(){
+    public HyriGameTeam getWinner() {
         return this.getWinner(true);
     }
 
-    public HyriGameTeam getLooser(){
+    public HyriGameTeam getLooser() {
         return this.getWinner(false);
     }
 
-    public int getTeamPoints(HyriGameTeam team){
+    public int getTeamPoints(HyriGameTeam team) {
         int pointsTeam = 0;
 
-        for(HyriGamePlayer player : team.getPlayers()){
+        for (HyriGamePlayer player : team.getPlayers()) {
             pointsTeam += this.getPlayer(player.getPlayer()).getAllPoints();
         }
 
         return pointsTeam;
     }
 
-    public List<LGGameTeam> getLGTeams(){
+    public List<LGGameTeam> getLGTeams() {
         return this.teams.stream().map(team -> (LGGameTeam) team).collect(Collectors.toList());
     }
 
     private void kickPlayersInBase(Location locFirst, Location locSecond, Location spawnLoc) {
         Area area = new Area(locFirst, locSecond);
         this.plugin.getGame().getPlayers().forEach(player -> {
-            if(area.isInArea(player.getPlayer().getLocation())){
+            if (area.isInArea(player.getPlayer().getLocation())) {
                 player.getPlayer().teleport(spawnLoc);
             }
         });
     }
 
-    private HyriGameTeam createTeam(ELGGameTeam gameTeam){
-        return new LGGameTeam(this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
+    private HyriGameTeam createTeam(ELGGameTeam gameTeam) {
+        return new LGGameTeam(this.plugin, gameTeam, ((LGGameType) this.type).getTeamsSize());
     }
 
-    private void doorAnimationOpen(Location locFirst, Location locSecond, BlockState blockk){
+    private void doorAnimationOpen(Location locFirst, Location locSecond, BlockState blockk) {
         this.doorOpen = true;
         Area area = new Area(locFirst, locSecond);
         int fx = area.getMin().getBlockX();
@@ -360,7 +364,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         int sx = area.getMax().getBlockX();
         int sy = area.getMax().getBlockY();
         int sz = area.getMax().getBlockZ();
-        for(int y = fy; y <= sy ; ++y){
+        for (int y = fy; y <= sy; ++y) {
             for (int x = fx; x <= sx; ++x) {
                 Location loc = new Location(locFirst.getWorld(), x, y, fz).clone();
                 Block block = loc.getBlock();
@@ -370,14 +374,15 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 fallingBlock.noclip = true;
 //                ((CraftWorld) IHyrame.WORLD.get()).getHandle().addEntity(fallingBlock);
 
-                new BukkitRunnable(){
+                new BukkitRunnable() {
                     int i = 0;
+
                     @Override
                     public void run() {
-                        if(i < 40){
+                        if (i < 40) {
                             i++;
                             fallingBlock.getBukkitEntity().teleport(fallingBlock.getBukkitEntity().getLocation().add(new Vector().setY(-3D)));
-                        }else {
+                        } else {
                             fallingBlock.getBukkitEntity().remove();
                             cancel();
                         }
@@ -387,7 +392,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         }
     }
 
-    private void doorAnimationClose(Location locFirst, Location locSecond, BlockState block){
+    private void doorAnimationClose(Location locFirst, Location locSecond, BlockState block) {
         Area area = new Area(locFirst, locSecond);
         int fx = area.getMin().getBlockX();
         int fy = area.getMin().getBlockY();
@@ -396,11 +401,12 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         int sx = area.getMax().getBlockX();
         int sy = area.getMax().getBlockY();
 
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             int y = sy;
+
             @Override
             public void run() {
-                if(y >= fy) {
+                if (y >= fy) {
                     for (int x = fx; x <= sx; ++x) {
                         Block blockLoc = new Location(locFirst.getWorld(), x, y, fz).getBlock();
                         blockLoc.setType(block.getType()/*data.getType()*/);
@@ -408,7 +414,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                         blockState.setData(block.getData());
                         blockState.update();
                     }
-                }else{
+                } else {
                     cancel();
                 }
                 --y;
@@ -424,7 +430,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         return finalKill;
     }
 
-    public void setFinalKill(){
+    public void setFinalKill() {
         this.finalKill = true;
     }
 
@@ -440,7 +446,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         final HyriLGPlayer account = gamePlayer.getAccount();
 
         if (this.getState() != HyriGameState.READY && this.getState() != HyriGameState.WAITING) {
-            if(account != null) {
+            if (account != null) {
                 account.update(gamePlayer);
             }
         }
@@ -448,17 +454,17 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     public HyriGameTeam getAdverseTeam(HyriGameTeam team) {
         for (HyriGameTeam otherTeam : this.teams) {
-            if(otherTeam != team)
+            if (otherTeam != team)
                 return otherTeam;
         }
         return null;
     }
 
-    public void addBonus(LGBonus bonus){
+    public void addBonus(LGBonus bonus) {
         this.bonus.add(bonus);
     }
 
-    public void removeBonus(UUID uuid){
+    public void removeBonus(UUID uuid) {
         this.bonus.removeIf(bonus -> bonus.getArmorStand().getUniqueId() == uuid);
     }
 }

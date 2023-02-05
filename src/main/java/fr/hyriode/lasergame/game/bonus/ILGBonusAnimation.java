@@ -1,7 +1,6 @@
 package fr.hyriode.lasergame.game.bonus;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -46,13 +45,13 @@ public interface ILGBonusAnimation {
         private void rotate() {
             this.armorStand.setHeadPose(new EulerAngle(Math.toRadians(rotate += 4), Math.toRadians(rotate), 0));
 
-            if(down){
+            if (down) {
                 this.armorStand.teleport(location.clone().add(new Vector().setY(up -= 0.05D)));
-                if(up < -0.5D)
+                if (up < -0.5D)
                     down = false;
-            }else{
+            } else {
                 this.armorStand.teleport(location.clone().add(new Vector().setY(up += 0.05D)));
-                if(up > 0.5D)
+                if (up > 0.5D)
                     down = true;
             }
         }

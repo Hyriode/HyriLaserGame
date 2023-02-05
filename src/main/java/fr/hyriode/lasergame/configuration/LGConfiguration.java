@@ -5,7 +5,7 @@ import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.hystia.api.config.IConfig;
 import org.bukkit.Location;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class LGConfiguration implements IConfig {
@@ -21,7 +21,7 @@ public class LGConfiguration implements IConfig {
 
     public LGConfiguration(List<Team> teams, WaitingRoom waitingRoom, List<LocationWrapper> bonusLocation,
                            List<LocationWrapper> spawnLocations, double laserRange,
-                           boolean friendlyFire, int timeSecond){
+                           boolean friendlyFire, int timeSecond) {
         this.teams = teams;
         this.waitingRoom = waitingRoom;
         this.bonusLocation = bonusLocation;
@@ -35,7 +35,7 @@ public class LGConfiguration implements IConfig {
         return this.teams;
     }
 
-    public Team getTeam(String name){
+    public Team getTeam(String name) {
         return this.teams.stream().filter(team -> team.getName().equals(name)).findFirst().orElse(null);
     }
 
@@ -79,7 +79,7 @@ public class LGConfiguration implements IConfig {
 
         public Team(String name, List<Door> doors,
                     LocationWrapper firstPointBaseArea, LocationWrapper secondPointBaseArea,
-                    LocationWrapper spawnLocation, LocationWrapper spawnCloseDoorLocation){
+                    LocationWrapper spawnLocation, LocationWrapper spawnCloseDoorLocation) {
             this.name = name;
 
             this.doors = doors;
@@ -116,14 +116,14 @@ public class LGConfiguration implements IConfig {
         }
     }
 
-    public static class WaitingRoom{
+    public static class WaitingRoom {
 
         private final LocationWrapper waitingSpawn;
 
         private final LocationWrapper waitingSpawnPos1;
         private final LocationWrapper waitingSpawnPos2;
 
-        public WaitingRoom(LocationWrapper waitingSpawn, LocationWrapper waitingSpawnPos1, LocationWrapper waitingSpawnPos2){
+        public WaitingRoom(LocationWrapper waitingSpawn, LocationWrapper waitingSpawnPos1, LocationWrapper waitingSpawnPos2) {
             this.waitingSpawn = waitingSpawn;
             this.waitingSpawnPos1 = waitingSpawnPos1;
             this.waitingSpawnPos2 = waitingSpawnPos2;
@@ -146,12 +146,12 @@ public class LGConfiguration implements IConfig {
         }
     }
 
-    public static class Door{
+    public static class Door {
 
         private final LocationWrapper firstPointDoor;
         private final LocationWrapper secondPointDoor;
 
-        public Door(LocationWrapper firstPointDoor, LocationWrapper secondPointDoor){
+        public Door(LocationWrapper firstPointDoor, LocationWrapper secondPointDoor) {
             this.firstPointDoor = firstPointDoor;
             this.secondPointDoor = secondPointDoor;
         }

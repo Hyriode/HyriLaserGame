@@ -16,13 +16,13 @@ public class LGBonus {
     private final HyriLaserGame plugin;
     private final Location location;
 
-    public LGBonus(ArmorStand armorStand, Location location, HyriLaserGame plugin){
+    public LGBonus(ArmorStand armorStand, Location location, HyriLaserGame plugin) {
         this.armorStand = armorStand;
         this.location = location;
         this.plugin = plugin;
     }
 
-    public static LGBonus spawn(Location location, HyriLaserGame plugin){
+    public static LGBonus spawn(Location location, HyriLaserGame plugin) {
         ArmorStand armorStand = location.getWorld().spawn(location.clone(), ArmorStand.class);
 
         armorStand.setVisible(false);
@@ -38,11 +38,11 @@ public class LGBonus {
         return bonus;
     }
 
-    public void respawn(){
+    public void respawn() {
         this.removeBonus();
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             this.armorStand = spawn(location, plugin).getArmorStand();
-        }, 20*25);
+        }, 20 * 25);
     }
 
     public ArmorStand getArmorStand() {
@@ -57,7 +57,7 @@ public class LGBonus {
         return ISBONUS_METADATA;
     }
 
-    private void removeBonus(){
+    private void removeBonus() {
         this.plugin.getGame().removeBonus(this.armorStand.getUniqueId());
         this.armorStand.remove();
     }

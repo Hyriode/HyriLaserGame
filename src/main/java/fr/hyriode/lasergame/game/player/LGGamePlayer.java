@@ -52,17 +52,17 @@ public class LGGamePlayer extends HyriGamePlayer {
         return this;
     }
 
-    public void giveGun(){
+    public void giveGun() {
         this.plugin.getHyrame().getItemManager().giveItem(this.player, 0, LGLaserGun.class);
         this.getPlayer().getInventory().setHeldItemSlot(0);
     }
 
-    public void cleanPlayer(){
+    public void cleanPlayer() {
         this.player.setGameMode(GameMode.ADVENTURE);
         this.player.setHealth(20.0F);
     }
 
-    public void kill(){
+    public void kill() {
         this.player.teleport(this.getRandomSpawn());
         this.giveDeathArmor();
         this.player.playSound(this.player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
@@ -81,21 +81,21 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.setNotDead();
     }
 
-    public void giveArmor(){
+    public void giveArmor() {
         giveArmor(this.getTeam().getColor().getDyeColor().getColor());
     }
 
-    public void giveInverseArmor(){
+    public void giveInverseArmor() {
         this.giveArmor(this.plugin.getGame().getTeams().stream()
                 .filter(hyriGameTeam -> hyriGameTeam.getColor() != this.getTeam().getColor()).collect(Collectors.toList()).get(0)
                 .getColor().getDyeColor().getColor());
     }
 
-    public void giveDeathArmor(){
+    public void giveDeathArmor() {
         giveArmor(Color.BLACK);
     }
 
-    private void giveArmor(Color color){
+    private void giveArmor(Color color) {
         this.player.getInventory().setHelmet(
                 new ItemBuilder(Material.LEATHER_HELMET)
                         .withLeatherArmorColor(color)
@@ -106,22 +106,22 @@ public class LGGamePlayer extends HyriGamePlayer {
                         .build());
     }
 
-    public void clearArmor(){
+    public void clearArmor() {
         this.player.getInventory().setHelmet(null);
         this.player.getInventory().setChestplate(null);
     }
 
     private boolean enableBonus = false;
 
-    public void activeBonus(ArmorStand armorStand){
-        if(this.plugin.getGame().getState() == HyriGameState.ENDED) return;
+    public void activeBonus(ArmorStand armorStand) {
+        if (this.plugin.getGame().getState() == HyriGameState.ENDED) return;
 
-        if(!armorStand.hasMetadata(LGBonus.getIsBonusMetadata())) return;
+        if (!armorStand.hasMetadata(LGBonus.getIsBonusMetadata())) return;
 
         LGBonusType bonusType = Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length));
 
-        if (this.hasBonus()){
-            if(this.enableBonus) return;
+        if (this.hasBonus()) {
+            if (this.enableBonus) return;
             this.enableBonus = true;
 
             this.getPlayer().sendMessage(ChatColor.RED + HyriLanguageMessage.get("bonus.pickup.already").getValue(this.getPlayer()));
@@ -130,7 +130,7 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         this.enableBonus = false;
 
-        if(this.isDead()) return;
+        if (this.isDead()) return;
 
         armorStand.remove();
 
@@ -145,7 +145,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.getPlayer().sendMessage(ChatColor.DARK_AQUA + HyriLanguageMessage.get("bonus.pickup.description").getValue(this.getPlayer()) + ChatColor.GRAY + bonusType.getLanguageDescription().getValue(this.getPlayer()));
 
         LGBonus bonus = this.plugin.getGame().getBonus(armorStand.getUniqueId());
-        if(bonus != null)
+        if (bonus != null)
             bonus.respawn();
     }
 
@@ -157,15 +157,15 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.bonus = hyriLGBonusType;
     }
 
-    public void addKill(){
+    public void addKill() {
         this.kills += 1;
     }
 
-    public void addDeath(){
+    public void addDeath() {
         this.deaths += 1;
     }
 
-    public void addKillStreak(){
+    public void addKillStreak() {
         this.killStreak += 1;
     }
 
@@ -173,7 +173,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         return killStreak;
     }
 
-    public void setCooldown(boolean cooldown){
+    public void setCooldown(boolean cooldown) {
         this.cooldown = cooldown;
     }
 
@@ -182,14 +182,14 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     public void setBestKillStreak() {
-        if(this.killStreak != 0 && this.killStreak % 5 == 0) {
+        if (this.killStreak != 0 && this.killStreak % 5 == 0) {
             this.points += 50;
         }
-        if(this.killStreak > this.bestKillStreak)
+        if (this.killStreak > this.bestKillStreak)
             this.bestKillStreak = this.killStreak;
     }
 
-    public boolean isLaserGun(ItemStack itemStack){
+    public boolean isLaserGun(ItemStack itemStack) {
         return new ItemNBT(itemStack).hasTag(LGLaserGun.LASER_GUN_NBT);
     }
 
@@ -205,7 +205,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         return points;
     }
 
-    public int getAllPoints(){
+    public int getAllPoints() {
         int kills = 0;
         int deaths = 0;
         int points = 0;
@@ -224,11 +224,11 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.points = points;
     }
 
-    public void addPoints(int points){
+    public void addPoints(int points) {
         this.points += points;
     }
 
-    public boolean isCooldown(){
+    public boolean isCooldown() {
         return this.cooldown;
     }
 
@@ -236,7 +236,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         return this.scoreboard;
     }
 
-    public int getPlayerPoints(){
+    public int getPlayerPoints() {
         int kills = this.getKills();
         int deaths = this.getDeaths();
         kills *= 75;
@@ -244,11 +244,11 @@ public class LGGamePlayer extends HyriGamePlayer {
         return Math.max(kills - deaths, 0) + this.points;
     }
 
-    public boolean hasBonus(){
+    public boolean hasBonus() {
         return this.getBonus() != null;
     }
 
-    public LGBonusType getBonus(){
+    public LGBonusType getBonus() {
         return this.bonus;
     }
 
@@ -259,7 +259,7 @@ public class LGGamePlayer extends HyriGamePlayer {
     public HyriLGPlayer getAccount() {
         IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(this.getUniqueId());
         HyriLGPlayer lgPlayer = player.getStatistics("lasergame", HyriLGPlayer.class);
-        if(lgPlayer != null){
+        if (lgPlayer != null) {
             return lgPlayer;
         }
         return new HyriLGPlayer();
@@ -268,7 +268,7 @@ public class LGGamePlayer extends HyriGamePlayer {
     public HyriLGPlayer getStatistics() {
         IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(this.getUniqueId());
         HyriLGPlayer lgPlayer = player.getStatistics("lasergame", HyriLGPlayer.class);
-        if(lgPlayer != null){
+        if (lgPlayer != null) {
             return lgPlayer;
         }
         return new HyriLGPlayer();

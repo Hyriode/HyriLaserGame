@@ -4,9 +4,10 @@ import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.map.*;
+import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,13 +18,13 @@ public class LGMapRendererWin extends MapRenderer {
 
     private boolean hasRendered = false;
 
-    public LGMapRendererWin(HyriLaserGame plugin){
+    public LGMapRendererWin(HyriLaserGame plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
-        if(!hasRendered) {
+        if (!hasRendered) {
             final LGGamePlayer lgPlayer = this.plugin.getGame().getPlayer(player.getUniqueId());
             final HyriGameTeam winner = this.plugin.getGame().getWinner();
             final HyriGameTeam looser = this.plugin.getGame().getLooser();
@@ -55,7 +56,7 @@ public class LGMapRendererWin extends MapRenderer {
             int posWinnerX = winnerTitle.length() * (graphics.getFont().getSize() / 2 + 1);
 
             graphics.setColor(Color.WHITE);
-            drawString(graphics, ""+this.plugin.getGame().getTeamPoints(winner), 10 + posWinnerX, 50, font.deriveFont(8F));
+            drawString(graphics, "" + this.plugin.getGame().getTeamPoints(winner), 10 + posWinnerX, 50, font.deriveFont(8F));
 
             /*Looser*/
             String looserTitle = looser.getDisplayName().getValue(player) + ": ";
@@ -64,7 +65,7 @@ public class LGMapRendererWin extends MapRenderer {
             drawString(graphics, looserTitle, 10, 60, font.deriveFont(8F));
             int posLooserX = looserTitle.length() * (graphics.getFont().getSize() / 2 + 1);
             graphics.setColor(Color.WHITE);
-            drawString(graphics, ""+this.plugin.getGame().getTeamPoints(looser), 10 + posLooserX, 60, font.deriveFont(8F));
+            drawString(graphics, "" + this.plugin.getGame().getTeamPoints(looser), 10 + posLooserX, 60, font.deriveFont(8F));
 
             /*Score of the Player*/
 
@@ -73,7 +74,7 @@ public class LGMapRendererWin extends MapRenderer {
             drawString(graphics, playerTitle, 10, 80, font.deriveFont(8F));
             int posPlayerX = playerTitle.length() * (graphics.getFont().getSize() / 2 + 1);
             graphics.setColor(Color.WHITE);
-            drawString(graphics, ""+lgPlayer.getPlayerPoints(), 10 + posPlayerX, 80, font.deriveFont(8F));
+            drawString(graphics, "" + lgPlayer.getPlayerPoints(), 10 + posPlayerX, 80, font.deriveFont(8F));
 
             drawString(graphics, "- " + this.getKeyPlayer(lgPlayer.getPlayer(), "kills") + ": " + lgPlayer.getKills(), 10, 90, font.deriveFont(8F));
             drawString(graphics, "- " + this.getKeyPlayer(lgPlayer.getPlayer(), "deaths") + ": " + lgPlayer.getDeaths(), 10, 100, font.deriveFont(8F));
@@ -86,11 +87,11 @@ public class LGMapRendererWin extends MapRenderer {
 
     }
 
-    private String getKeyPlayer(Player player, String key){
+    private String getKeyPlayer(Player player, String key) {
         return HyriLanguageMessage.get("map.player." + key).getValue(player);
     }
 
-    private String getKeyTitle(Player player, String key){
+    private String getKeyTitle(Player player, String key) {
         return HyriLanguageMessage.get("map.title." + key).getValue(player);
     }
 

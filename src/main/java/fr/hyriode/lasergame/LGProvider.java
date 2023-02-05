@@ -9,7 +9,7 @@ public class LGProvider implements IPluginProvider {
 
     private final HyriLaserGame plugin;
 
-    public LGProvider(HyriLaserGame plugin){
+    public LGProvider(HyriLaserGame plugin) {
         this.plugin = plugin;
     }
 
@@ -25,17 +25,17 @@ public class LGProvider implements IPluginProvider {
 
     @Override
     public String[] getCommandsPackages() {
-        return new String[] {PACKAGE};
+        return new String[]{PACKAGE};
     }
 
     @Override
     public String[] getListenersPackages() {
-        return new String[] {PACKAGE};
+        return new String[]{PACKAGE};
     }
 
     @Override
     public String[] getItemsPackages() {
-        return new String[] {PACKAGE};
+        return new String[]{PACKAGE};
     }
 
     @Override

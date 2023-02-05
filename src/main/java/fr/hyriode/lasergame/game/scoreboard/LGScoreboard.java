@@ -40,50 +40,50 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
         this.addHostnameLine();
     }
 
-    private String getTeamLine(){
+    private String getTeamLine() {
         HyriGameTeam team = this.getPlayerGame().getTeam();
         return ChatColor.WHITE + this.getLinePrefix("team") + ": " + team.getColor().getChatColor() + team.getDisplayName().getValue(this.getPlayer());
     }
 
-    private String getPointsLine(){
+    private String getPointsLine() {
         HyriGameTeam team = this.getPlayerGame().getTeam();
         return team.getColor().getChatColor() + team.getDisplayName().getValue(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team) + " ";
     }
 
-    private String getPointsAdverseLine(){
+    private String getPointsAdverseLine() {
         HyriGameTeam team = this.game.getAdverseTeam(this.getPlayerGame().getTeam());
         return team.getColor().getChatColor() + team.getDisplayName().getValue(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team);
     }
 
-    private String getBonusLine(){
-        if(this.plugin.getGame().getState() == HyriGameState.ENDED)
+    private String getBonusLine() {
+        if (this.plugin.getGame().getState() == HyriGameState.ENDED)
             return ChatColor.WHITE + this.getLinePrefix("points") + ": " + ChatColor.AQUA + this.plugin.getGame().getTeamPoints(this.plugin.getGame().getWinner());
         return ChatColor.WHITE + this.getLinePrefix("bonus") + ": " + ChatColor.AQUA + (this.getPlayerGame().hasBonus() ? this.getPlayerGame().getBonus().getLanguageName().getValue(player.getPlayer()) : HyriLanguageMessage.get("bonus.unknown").getValue(this.player));
     }
 
     private String getTimeLine() {
-        if(this.plugin.getGame().getState() != HyriGameState.ENDED && !this.plugin.getGame().isFinalKill()) {
+        if (this.plugin.getGame().getState() != HyriGameState.ENDED && !this.plugin.getGame().isFinalKill()) {
             if (this.plugin.getGame().isDoorOpen())
                 --timeSecond;
             if (timeSecond <= 0) {
-                if(!this.plugin.getGame().hasSamePoints()) {
+                if (!this.plugin.getGame().hasSamePoints()) {
                     this.plugin.getGame().win(this.plugin.getGame().getWinner());
-                }else{
+                } else {
                     this.plugin.getGame().setFinalKill();
-                    for(LGGamePlayer player : this.plugin.getGame().getPlayers()) {
-                        Title.sendTitle(player.getPlayer(), ChatColor.RED + HyriLanguageMessage.get("game.suddendeath.title").getValue(player.getPlayer()), HyriLanguageMessage.get("game.suddendeath.subtitle").getValue(player.getPlayer()), 1, 20*3, 1);
+                    for (LGGamePlayer player : this.plugin.getGame().getPlayers()) {
+                        Title.sendTitle(player.getPlayer(), ChatColor.RED + HyriLanguageMessage.get("game.suddendeath.title").getValue(player.getPlayer()), HyriLanguageMessage.get("game.suddendeath.subtitle").getValue(player.getPlayer()), 1, 20 * 3, 1);
                     }
                 }
             }
         }
         int sec = timeSecond % 60;
         int min = (timeSecond / 60) % 60;
-        if(this.plugin.getGame().getState() != HyriGameState.ENDED && !this.plugin.getGame().isFinalKill())
+        if (this.plugin.getGame().getState() != HyriGameState.ENDED && !this.plugin.getGame().isFinalKill())
             return ChatColor.WHITE + this.getLinePrefix("time") + ChatColor.AQUA + (min + "m" + sec + "s");
-        else if(this.plugin.getGame().getState() == HyriGameState.ENDED) {
+        else if (this.plugin.getGame().getState() == HyriGameState.ENDED) {
             HyriGameTeam team = this.plugin.getGame().getWinner();
             return ChatColor.WHITE + this.getLinePrefix("winner") + team.getColor().getChatColor() + team.getDisplayName().getValue(player.getPlayer());
-        }else
+        } else
             return ChatColor.WHITE + this.getLinePrefix("time") + ChatColor.AQUA + this.getLinePrefix("suddendeath");
     }
 
@@ -99,7 +99,7 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
         return ChatColor.GRAY + format.format(new Date());
     }
 
-    private LGGamePlayer getPlayerGame(){
+    private LGGamePlayer getPlayerGame() {
         return this.plugin.getGame().getPlayer(player.getUniqueId());
     }
 }

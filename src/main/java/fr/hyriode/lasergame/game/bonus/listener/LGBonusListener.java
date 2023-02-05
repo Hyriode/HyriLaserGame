@@ -18,8 +18,8 @@ public class LGBonusListener extends HyriListener<HyriLaserGame> {
     }
 
     @EventHandler
-    public void onPickupBonus(EntityDamageByEntityEvent event){
-        if(event.getEntity() instanceof ArmorStand){
+    public void onPickupBonus(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof ArmorStand) {
             this.plugin.getGame().getPlayer(event.getDamager().getUniqueId()).activeBonus((ArmorStand) event.getEntity());
         }
     }
@@ -31,13 +31,13 @@ public class LGBonusListener extends HyriListener<HyriLaserGame> {
     }
 
     @EventHandler
-    public void onTriggeredBonus(PlayerMoveEvent event){
+    public void onTriggeredBonus(PlayerMoveEvent event) {
         final Location loc = event.getTo();
         LGGamePlayer player = this.plugin.getGame().getPlayer(event.getPlayer().getUniqueId());
 
         for (LGBonus locBonus : this.plugin.getGame().getBonus()) {
-            if(this.isInBonus(loc, locBonus.getLocation())){
-                if(!player.hasBonus()) {
+            if (this.isInBonus(loc, locBonus.getLocation())) {
+                if (!player.hasBonus()) {
                     player.activeBonus(locBonus.getArmorStand());
                 }
                 break;
@@ -45,7 +45,7 @@ public class LGBonusListener extends HyriListener<HyriLaserGame> {
         }
     }
 
-    private boolean isInBonus(Location locTo, Location bonus){
+    private boolean isInBonus(Location locTo, Location bonus) {
         return bonus.getBlockX() == locTo.getBlockX() && bonus.getBlockY() == locTo.getBlockY() && bonus.getBlockZ() == locTo.getBlockZ();
     }
 

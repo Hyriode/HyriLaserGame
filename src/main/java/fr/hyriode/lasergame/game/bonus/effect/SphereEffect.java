@@ -1,15 +1,12 @@
 package fr.hyriode.lasergame.game.bonus.effect;
 
-import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.game.LGGame;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import fr.hyriode.lasergame.utils.RandomUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
@@ -17,7 +14,6 @@ import xyz.xenondevs.particle.ParticleEffect;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SphereEffect {
 

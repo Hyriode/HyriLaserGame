@@ -12,7 +12,7 @@ public enum LGGameType implements HyriGameType {
     private final int minPlayers;
     private final int maxPlayers;
 
-    LGGameType(String name, int teamsSize, int minPlayers, int maxPlayers){
+    LGGameType(String name, int teamsSize, int minPlayers, int maxPlayers) {
         this.name = name;
         this.teamsSize = teamsSize;
         this.minPlayers = HyriAPI.get().getConfig().isDevEnvironment() ? 2 : minPlayers;

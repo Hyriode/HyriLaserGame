@@ -22,7 +22,7 @@ public class HyriLGPlayer extends HyriPlayerData {
         this.kills = kills;
     }
 
-    public void addKills(int kills){
+    public void addKills(int kills) {
         this.kills += kills;
     }
 
@@ -30,7 +30,7 @@ public class HyriLGPlayer extends HyriPlayerData {
         this.deaths = deaths;
     }
 
-    public void addDeaths(int deaths){
+    public void addDeaths(int deaths) {
         this.deaths += deaths;
     }
 
@@ -42,7 +42,7 @@ public class HyriLGPlayer extends HyriPlayerData {
         this.playTime = playTime;
     }
 
-    public void addPlayedTime(long playTime){
+    public void addPlayedTime(long playTime) {
         this.playTime += playTime;
     }
 
@@ -51,7 +51,7 @@ public class HyriLGPlayer extends HyriPlayerData {
     }
 
     public void setBestWinStreak(long bestWinStreak) {
-        if(bestWinStreak + 1 > this.bestWinStreak)
+        if (bestWinStreak + 1 > this.bestWinStreak)
             this.bestWinStreak = bestWinStreak;
     }
 

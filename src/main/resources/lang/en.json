@@ -1,17 +1,13 @@
 {
   "game.description": "Shoot the opponents to put them out of the game and\ncollect the bonuses of the card. Accumulate points and\nwin the game by killing the most opponents",
-
   "blue.display": "Blue",
   "red.display": "Red",
-
   "item.lasergun": "&4Laser Gun",
   "lore.lasergun": "Shoot on everyone",
-
   "player.death.title": "&cYou are dead!",
   "player.death.subtitle": "&cYou will be able to shoot in %ss",
   "player.death.subtitle.good": "&aYou are able to shoot",
   "player.death.chat": "%s was hit",
-
   "scoreboard.kills.display": "Kills: ",
   "scoreboard.deaths.display": "Deaths: ",
   "scoreboard.winner.display": "Winner: ",
@@ -21,17 +17,14 @@
   "scoreboard.points.display": "Points",
   "scoreboard.bonus.display": "Bonus",
   "scoreboard.team.display": "Team",
-
   "map.title.victory": "VICTORY",
   "map.title.defeat": "DEFEAT",
   "map.player.title": "You",
   "map.player.deaths": "Deaths",
   "map.player.kills": "Kills",
   "map.name": "Result",
-
   "game.suddendeath.title": "Sudden Death",
   "game.suddendeath.subtitle": "Kill for finish the game",
-
   "bonus.invisibility.name": "Invisibility",
   "bonus.inversion.name": "Inversion",
   "bonus.shoot_faster.name": "Shoot Faster",
@@ -45,19 +38,14 @@
   "bonus.pickup.title": "You received:",
   "bonus.pickup.description": "Description: ",
   "bonus.pickup.already": "You already have a bonus!",
-
   "bonus.unknown": "Unknown",
-
   "damage.death.shield_fell": "Your shield is broken (You fell)",
   "damage.death.fell": "+1 Death (You fell)",
-
   "game.timer.can-shoot": "You can shoot in",
   "game.starting-in": "Starting in",
-
   "message.game.end.kills": "%position% Points §7- %player% §7- %kills%",
   "message.game.end.1": "§e1st",
   "message.game.end.2": "§62nd",
   "message.game.end.3": "§c3th",
-
   "message.game.end.nobody": "Nobody"
 }

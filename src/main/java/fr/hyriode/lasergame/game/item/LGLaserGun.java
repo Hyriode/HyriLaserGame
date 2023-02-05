@@ -27,7 +27,6 @@ import xyz.xenondevs.particle.data.color.RegularColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LGLaserGun extends HyriItem<HyriLaserGame> {
@@ -55,13 +54,13 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
         this.enable = enable;
     }
 
-    private void click(Player player){
-        if(!enable) return;
+    private void click(Player player) {
+        if (!enable) return;
         LGGame game = this.plugin.getGame();
         LGGamePlayer killer = game.getPlayer(player.getUniqueId());
         boolean isFaster = killer.hasBonus() && killer.getBonus() == LGBonusType.SHOOT_FASTER;
 
-        if((!killer.isCooldown() || isFaster) && !killer.isDead()) {
+        if ((!killer.isCooldown() || isFaster) && !killer.isDead()) {
             final double maxRange = this.plugin.getConfiguration().getLaserRange();
             final boolean friendlyFire = killer.getTeam().isFriendlyFire();
 
@@ -71,7 +70,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
             final TargetInfo targetInfo = new TargetProvider(player, maxRange)
                     .withAimingTolerance(1.60D)
                     .withIgnoredBlocks(whitelistedBlocks)
-                    .withIgnoredEntities(friendlyFire ? new ArrayList<>() : teamPlayers.stream().map(p -> (Entity)p).collect(Collectors.toList()))
+                    .withIgnoredEntities(friendlyFire ? new ArrayList<>() : teamPlayers.stream().map(p -> (Entity) p).collect(Collectors.toList()))
                     .get();
             final Color colorTeam = team.getColor().getDyeColor().getColor();
             final Location eyeLocation = player.getEyeLocation();
@@ -82,12 +81,12 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
             if (targetInfo != null) {
                 range = targetInfo.getDistance();
 
-                if(!(targetInfo.getEntity() instanceof Player)){
-                    if(targetInfo.getEntity() instanceof ArmorStand){
+                if (!(targetInfo.getEntity() instanceof Player)) {
+                    if (targetInfo.getEntity() instanceof ArmorStand) {
                         ArmorStand bonus = (ArmorStand) targetInfo.getEntity();
                         killer.activeBonus(bonus);
                     }
-                }else {
+                } else {
 
                     LGGamePlayer targetPlayer = game.getPlayer(targetInfo.getEntity().getUniqueId());
                     boolean isShieldTarget = targetPlayer.hasBonus() && targetPlayer.getBonus() == LGBonusType.SHIELD;
@@ -120,7 +119,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
                     final Location blockLoc = startingLoc.clone().add(blockVec);
                     final Block block = blockLoc.getBlock();
 
-                    if(block != null) {
+                    if (block != null) {
                         final Material type = block.getType();
 
                         if (!whitelistedBlocks.contains(type)) {
@@ -143,14 +142,15 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
     }
 
     private void setCooldown(LGGamePlayer player) {
-        if(!player.isCooldown()) {
+        if (!player.isCooldown()) {
             player.setCooldown(true);
             new BukkitRunnable() {
                 int i = 0;
+
                 @Override
                 public void run() {
                     player.getPlayer().setExp((float) i / 10);//5
-                    if(i >= 10 || player.getBonus() == LGBonusType.SHOOT_FASTER){
+                    if (i >= 10 || player.getBonus() == LGBonusType.SHOOT_FASTER) {
                         player.getPlayer().setExp(1.0F);
                         player.setCooldown(false);
                         cancel();
@@ -188,7 +188,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
         this.playSound(player, Sound.VILLAGER_HIT);
     }
 
-    private void playSound(Player player, Sound sound){
+    private void playSound(Player player, Sound sound) {
         player.playSound(player.getLocation(), sound, 1, 3F);
     }
 }
