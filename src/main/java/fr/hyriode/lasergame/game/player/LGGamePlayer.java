@@ -117,9 +117,10 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         if(!armorStand.hasMetadata(LGBonus.getIsBonusMetadata())) return;
 
+        //TODO: dont forget to edit this
         LGBonusType bonusType = LGBonusType.SHIELD;//Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length));
 
-        if(this.hasBonus()){
+        if (this.hasBonus()){
             if(this.enableBonus) return;
             this.enableBonus = true;
 

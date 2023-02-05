@@ -39,10 +39,9 @@ public enum LGBonusType {
     SPEED("speed", 10, (player, __) -> player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20*10, 0, true, true)),
             (player, __) -> player.getPlayer().removePotionEffect(PotionEffectType.SPEED)),
     SHIELD("shield", 5, (player, plugin) -> {
-        SphereEffect sphereEffect = new SphereEffect(plugin, player);
+        SphereEffect sphereEffect = new SphereEffect(plugin, player, 5);
         sphereEffect.start();
-    }, (player, plugin) -> {
-    })
+    }, (player, plugin) -> {})
     ;
 
     private final String name;

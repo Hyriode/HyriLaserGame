@@ -8,12 +8,14 @@ import fr.hyriode.lasergame.utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,35 +28,51 @@ public class SphereEffect {
 
     private final LGGamePlayer player;
     private final HyriLaserGame plugin;
-    private BukkitTask timer;
+    private final int seconds;
 
 
-    public SphereEffect(HyriLaserGame plugin, LGGamePlayer player) {
+    public SphereEffect(HyriLaserGame plugin, LGGamePlayer player, int seconds) {
         this.plugin = plugin;
         this.player = player;
+        this.seconds = seconds;
     }
 
     public void start() {
-        LGGame game = this.plugin.getGame();
-        this.timer = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> {
-            List<Player> players = game.getPlayers().stream()
-                    .map(HyriGameSpectator::getPlayer)
-                    .filter(player -> !player.getUniqueId().equals(this.player.getUniqueId()))
-                    .collect(Collectors.toList());
-            Location location = this.player.getPlayer().getLocation();
-            location.add(0, this.yOffset, 0);
-            for (int i = 0; i < this.particlesDisplay; i++) {
-                Vector v = RandomUtils.getRandomVector().multiply(this.radius);
-                new ParticleBuilder(this.particle, location.add(v))
-                        .setColor(Color.BLUE)
-                        .display(players);
-                location.subtract(v);
-            }
-        }, 0, 3);
-    }
+        final LGGame game = this.plugin.getGame();
 
-    public void stop() {
-        this.timer.cancel();
+        List<Player> players = new ArrayList<>();
+
+        for (LGGamePlayer gamePlayer : game.getPlayers()) {
+            if (gamePlayer.getUniqueId() != player.getUniqueId()) {
+                players.add(gamePlayer.getPlayer());
+            }
+        }
+
+        new BukkitRunnable() {
+            int index = 0;
+
+            @Override
+            public void run() {
+                if (index % 3 == 0) {
+                    Location location = player.getPlayer().getLocation();
+                    location.add(0, yOffset, 0);
+
+                    for (int i = 0; i < particlesDisplay; i++) {
+                        Vector v = RandomUtils.getRandomVector().multiply(radius);
+                        new ParticleBuilder(particle, location.add(v))
+                                .setColor(Color.BLUE)
+                                .display(players);
+                        location.subtract(v);
+                    }
+                }
+
+                if (index == seconds * 20) {
+                    cancel();
+                }
+
+                index++;
+            }
+        }.runTaskTimer(this.plugin, 0, 1);
     }
 
 }
