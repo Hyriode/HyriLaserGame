@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -117,8 +118,7 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         if(!armorStand.hasMetadata(LGBonus.getIsBonusMetadata())) return;
 
-        //TODO: dont forget to edit this
-        LGBonusType bonusType = LGBonusType.SHIELD;//Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length));
+        LGBonusType bonusType = Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length));
 
         if (this.hasBonus()){
             if(this.enableBonus) return;
