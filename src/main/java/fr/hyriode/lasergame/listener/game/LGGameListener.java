@@ -42,9 +42,6 @@ public class LGGameListener extends HyriListener<HyriLaserGame> {
         player.getPlayer().getInventory().clear();
 
         player.respawn();
-
-        this.plugin.getGame().getProtocolManager().getProtocol(HyriDeathProtocol.class)
-                .runDeath(HyriGameDeathEvent.Reason.VOID, player.getPlayer());
     }
 
     @HyriEventHandler
