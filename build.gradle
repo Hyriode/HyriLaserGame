@@ -59,6 +59,7 @@ shadowJar {
 }
 
 task deploy(dependsOn: shadowJar) {
+    //delete "H:/Dev/dev Mc/Serveurs/hyriode/HyriLaserGame/plugins/HyriLaserGame-1.0.0-all.jar"
     doLast {
         copy {
             from "$buildDir/libs/HyriLaserGame-1.0.0-all.jar"

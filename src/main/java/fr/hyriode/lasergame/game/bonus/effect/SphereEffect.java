@@ -27,12 +27,10 @@ public class SphereEffect {
     private final LGGamePlayer player;
     private final HyriLaserGame plugin;
     private BukkitTask timer;
-    private int time = 0;
 
     public SphereEffect(HyriLaserGame plugin, LGGamePlayer player) {
         this.plugin = plugin;
         this.player = player;
-        this.time = time;
     }
 
     public void start() {

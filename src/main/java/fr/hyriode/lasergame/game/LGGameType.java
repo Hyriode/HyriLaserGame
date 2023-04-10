@@ -1,5 +1,6 @@
 package fr.hyriode.lasergame.game;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.HyriGameType;
 
 public enum LGGameType implements HyriGameType {
@@ -14,7 +15,7 @@ public enum LGGameType implements HyriGameType {
     LGGameType(String name, int teamsSize, int minPlayers, int maxPlayers){
         this.name = name;
         this.teamsSize = teamsSize;
-        this.minPlayers = minPlayers;
+        this.minPlayers = HyriAPI.get().getConfig().isDevEnvironment() ? 2 : minPlayers;
         this.maxPlayers = maxPlayers;
     }
 

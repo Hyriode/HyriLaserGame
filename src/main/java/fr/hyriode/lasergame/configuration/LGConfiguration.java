@@ -1,7 +1,9 @@
 package fr.hyriode.lasergame.configuration;
 
 import fr.hyriode.api.config.IHyriConfig;
+import fr.hyriode.hyrame.game.waitingroom.HyriWaitingRoom;
 import fr.hyriode.hyrame.utils.Area;
+import fr.hyriode.hyrame.utils.AreaWrapper;
 import fr.hyriode.hyrame.utils.LocationWrapper;
 import org.bukkit.Location;
 
@@ -12,22 +14,17 @@ public class LGConfiguration implements IHyriConfig {
 
     private final List<Team> teams;
 
-    private final WaitingRoom waitingRoom;
+    private final HyriWaitingRoom.Config waitingRoom;
     private final List<LocationWrapper> bonusLocation;
     private final List<LocationWrapper> spawnLocations;
-    private final double laserRange;
-    private final boolean friendlyFire;
     private final int timeSecond;
 
-    public LGConfiguration(List<Team> teams, WaitingRoom waitingRoom, List<LocationWrapper> bonusLocation,
-                           List<LocationWrapper> spawnLocations, double laserRange,
-                           boolean friendlyFire, int timeSecond){
+    public LGConfiguration(List<Team> teams, HyriWaitingRoom.Config waitingRoom, List<LocationWrapper> bonusLocation,
+                           List<LocationWrapper> spawnLocations, int timeSecond){
         this.teams = teams;
         this.waitingRoom = waitingRoom;
         this.bonusLocation = bonusLocation;
         this.spawnLocations = spawnLocations;
-        this.laserRange = laserRange;
-        this.friendlyFire = friendlyFire;
         this.timeSecond = timeSecond;
     }
 
@@ -37,14 +34,6 @@ public class LGConfiguration implements IHyriConfig {
 
     public Team getTeam(String name){
         return this.teams.stream().filter(team -> team.getName().equals(name)).findFirst().orElse(null);
-    }
-
-    public double getLaserRange() {
-        return this.laserRange;
-    }
-
-    public boolean isFriendlyFire() {
-        return this.friendlyFire;
     }
 
     public List<Location> getBonusLocation() {
@@ -59,7 +48,7 @@ public class LGConfiguration implements IHyriConfig {
         return this.timeSecond;
     }
 
-    public WaitingRoom getWaitingRoom() {
+    public HyriWaitingRoom.Config getWaitingRoom() {
         return waitingRoom;
     }
 
@@ -67,25 +56,22 @@ public class LGConfiguration implements IHyriConfig {
 
         private final String name;
 
-        private final List<Door> doors;
+        private final List<AreaWrapper> doors;
 
-        private final LocationWrapper firstPointBaseArea;
-
-        private final LocationWrapper secondPointBaseArea;
+        private final AreaWrapper baseArea;
 
         private final LocationWrapper spawnLocation;
 
         private final LocationWrapper spawnCloseDoorLocation;
 
-        public Team(String name, List<Door> doors,
-                    LocationWrapper firstPointBaseArea, LocationWrapper secondPointBaseArea,
+        public Team(String name, List<AreaWrapper> doors,
+                    AreaWrapper baseArea,
                     LocationWrapper spawnLocation, LocationWrapper spawnCloseDoorLocation){
             this.name = name;
 
             this.doors = doors;
 
-            this.firstPointBaseArea = firstPointBaseArea;
-            this.secondPointBaseArea = secondPointBaseArea;
+            this.baseArea = baseArea;
 
             this.spawnLocation = spawnLocation;
             this.spawnCloseDoorLocation = spawnCloseDoorLocation;
@@ -99,7 +85,7 @@ public class LGConfiguration implements IHyriConfig {
             return spawnLocation.asBukkit();
         }
 
-        public List<Door> getDoors() {
+        public List<AreaWrapper> getDoors() {
             return doors;
         }
 
@@ -107,64 +93,9 @@ public class LGConfiguration implements IHyriConfig {
             return spawnCloseDoorLocation.asBukkit();
         }
 
-        public Location getFirstPointBaseArea() {
-            return firstPointBaseArea.asBukkit();
+        public Area getBaseArea() {
+            return baseArea.asArea();
         }
-
-        public Location getSecondPointBaseArea() {
-            return secondPointBaseArea.asBukkit();
-        }
-    }
-
-    public static class WaitingRoom{
-
-        private final LocationWrapper waitingSpawn;
-
-        private final LocationWrapper waitingSpawnPos1;
-        private final LocationWrapper waitingSpawnPos2;
-
-        public WaitingRoom(LocationWrapper waitingSpawn, LocationWrapper waitingSpawnPos1, LocationWrapper waitingSpawnPos2){
-            this.waitingSpawn = waitingSpawn;
-            this.waitingSpawnPos1 = waitingSpawnPos1;
-            this.waitingSpawnPos2 = waitingSpawnPos2;
-        }
-
-        public Location getWaitingSpawn() {
-            return waitingSpawn.asBukkit();
-        }
-
-        public Location getWaitingSpawnPos1() {
-            return waitingSpawnPos1.asBukkit();
-        }
-
-        public Location getWaitingSpawnPos2() {
-            return waitingSpawnPos2.asBukkit();
-        }
-
-        public Area getArea() {
-            return new Area(this.waitingSpawnPos1.asBukkit(), this.waitingSpawnPos2.asBukkit());
-        }
-    }
-
-    public static class Door{
-
-        private final LocationWrapper firstPointDoor;
-        private final LocationWrapper secondPointDoor;
-
-        public Door(LocationWrapper firstPointDoor, LocationWrapper secondPointDoor){
-            this.firstPointDoor = firstPointDoor;
-            this.secondPointDoor = secondPointDoor;
-        }
-
-        public Location getFirstPointDoor() {
-            return firstPointDoor.asBukkit();
-        }
-
-        public Location getSecondPointDoor() {
-            return secondPointDoor.asBukkit();
-        }
-
-
     }
 
 }

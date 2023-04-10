@@ -5,6 +5,7 @@
   "red.display": "Rouge",
 
   "item.lasergun": "&4Pistolet Laser",
+  "lore.lasergun": "&7Tirez sur vos ennemis",
 
   "player.death.title": "&cVous êtes mort!",
   "player.death.subtitle": "&cVous pourrez tirer dans %ss",
@@ -52,7 +53,7 @@
   "game.timer.can-shoot": "Vous pouvez tirer dans",
   "game.starting-in": "Commencement dans",
 
-  "message.game.end.kills": "%position% Points §7- %player% §7- %kills%",
+  "message.game.end.points": "%position% Points §7- %player% §7- %kills%",
   "message.game.end.1": "§e1er",
   "message.game.end.2": "§62ème",
   "message.game.end.3": "§c3ème",

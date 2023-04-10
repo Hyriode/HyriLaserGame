@@ -5,6 +5,7 @@
   "red.display": "Red",
 
   "item.lasergun": "&4Laser Gun",
+  "lore.lasergun": "Shoot on everyone",
 
   "player.death.title": "&cYou are dead!",
   "player.death.subtitle": "&cYou will be able to shoot in %ss",
@@ -53,7 +54,7 @@
   "game.timer.can-shoot": "You can shoot in",
   "game.starting-in": "Starting in",
 
-  "message.game.end.kills": "%position% Points §7- %player% §7- %kills%",
+  "message.game.end.points": "%position% Points §7- %player% §7- %kills%",
   "message.game.end.1": "§e1st",
   "message.game.end.2": "§62nd",
   "message.game.end.3": "§c3th",

@@ -19,20 +19,19 @@ import java.util.TimeZone;
 public class LGScoreboard extends HyriGameScoreboard<LGGame> {
 
     private final HyriLaserGame plugin;
-
     private int timeSecond;
 
-    public LGScoreboard(HyriLaserGame plugin, LGGame game, Player player) {
-        super(plugin, game, player, "lasergame");
+    public LGScoreboard(HyriLaserGame plugin, Player player) {
+        super(plugin, plugin.getGame(), player, "lasergame");
         this.plugin = plugin;
         this.timeSecond = plugin.getConfiguration().getTimeSecond();
 
         this.setLine(0, this.getDateLine(), scoreboardLine -> scoreboardLine.setValue(this.getDateLine()), 20);
-        this.setLine(1, "  ");
+        this.addBlankLine(1);
         this.setLine(2, this.getTeamLine());
         this.setLine(3, this.getTimeLine(), line -> line.setValue(this.getTimeLine()), 20);
         this.setLine(4, this.getBonusLine(), line -> line.setValue(this.getBonusLine()), 1);
-        this.setLine(5, "   ");
+        this.addBlankLine(5);
         this.setLine(6, this.getPointsLine(), line -> line.setValue(this.getPointsLine()), 2);
         this.setLine(7, this.getPointsAdverseLine(), line -> line.setValue(this.getPointsAdverseLine()), 2);
         this.setLine(8, "    ");

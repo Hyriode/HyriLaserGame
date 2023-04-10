@@ -48,8 +48,8 @@ public class LGBonus {
     }
 
     public void active(LGGamePlayer player, HyriLaserGame plugin){
-        Player pl = player.getPlayer();
-        if(player.hasBonus()){
+        if(player != null && player.hasBonus()){
+            Player pl = player.getPlayer();
             int time = this.getTimeSecond();
             this.before.accept(player, plugin);
             new BukkitRunnable(){
