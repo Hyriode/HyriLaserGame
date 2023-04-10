@@ -36,7 +36,8 @@ public class SphereEffect {
     public void start() {
         LGGame game = this.plugin.getGame();
         this.timer = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> {
-            if(this.player == null || this.player.getPlayer().isDead()) {
+            Player owner = this.player == null ? null : this.player.getPlayer();
+            if(owner == null || this.player.getPlayer().isDead()) {
                 this.stop();
                 return;
             }
@@ -44,7 +45,7 @@ public class SphereEffect {
                     .map(HyriGameSpectator::getPlayer)
                     .filter(player -> !player.getUniqueId().equals(this.player.getUniqueId()))
                     .collect(Collectors.toList());
-            Location location = this.player.getPlayer().getLocation();
+            Location location = owner.getLocation();
             location.add(0, this.yOffset, 0);
             for (int i = 0; i < this.particlesDisplay; i++) {
                 Vector v = RandomUtils.getRandomVector().multiply(this.radius);

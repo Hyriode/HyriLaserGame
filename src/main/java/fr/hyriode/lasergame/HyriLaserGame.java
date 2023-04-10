@@ -141,8 +141,7 @@ public class HyriLaserGame extends JavaPlugin {
                     new LocationWrapper(-40.5, 145, 23.5),
                     new LocationWrapper(-26.5, 145, 39.5, 180, 0),
                     new LocationWrapper(-25.5, 145, 38.5, 90, 0)
-            ), 60*5);
-            System.out.println(HyriAPI.GSON.toJson(this.configuration));
+            ));
         }
 
         this.hyrame = HyrameLoader.load(new LGProvider(this));

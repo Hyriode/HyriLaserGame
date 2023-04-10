@@ -45,6 +45,7 @@ public class LGPlayerListener extends HyriListener<HyriLaserGame> {
     public void onMovePlayer(PlayerMoveEvent event){
         final Player player = event.getPlayer();
         final LGGamePlayer gamePlayer = this.plugin.getGame().getPlayer(player);
+        if(gamePlayer == null) return;
         if (gamePlayer.isDead()) {
             gamePlayer.respawn();
         }

@@ -24,7 +24,7 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
     public LGScoreboard(HyriLaserGame plugin, Player player) {
         super(plugin, plugin.getGame(), player, "lasergame");
         this.plugin = plugin;
-        this.timeSecond = plugin.getConfiguration().getTimeSecond();
+        this.timeSecond = 300;
 
         this.setLine(0, this.getDateLine(), scoreboardLine -> scoreboardLine.setValue(this.getDateLine()), 20);
         this.addBlankLine(1);

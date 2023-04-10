@@ -17,15 +17,13 @@ public class LGConfiguration implements IHyriConfig {
     private final HyriWaitingRoom.Config waitingRoom;
     private final List<LocationWrapper> bonusLocation;
     private final List<LocationWrapper> spawnLocations;
-    private final int timeSecond;
 
     public LGConfiguration(List<Team> teams, HyriWaitingRoom.Config waitingRoom, List<LocationWrapper> bonusLocation,
-                           List<LocationWrapper> spawnLocations, int timeSecond){
+                           List<LocationWrapper> spawnLocations){
         this.teams = teams;
         this.waitingRoom = waitingRoom;
         this.bonusLocation = bonusLocation;
         this.spawnLocations = spawnLocations;
-        this.timeSecond = timeSecond;
     }
 
     public List<Team> getTeams() {
@@ -42,10 +40,6 @@ public class LGConfiguration implements IHyriConfig {
 
     public List<LocationWrapper> getSpawnLocations() {
         return spawnLocations;
-    }
-
-    public int getTimeSecond() {
-        return this.timeSecond;
     }
 
     public HyriWaitingRoom.Config getWaitingRoom() {

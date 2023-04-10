@@ -127,6 +127,10 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         LGBonus bonusType = Arrays.asList(LGBonusType.values()).get(ThreadLocalRandom.current().nextInt(LGBonusType.values().length)).get();
 
+        this.activeSpecificBonus(bonusType, armorStand);
+    }
+
+    public void activeSpecificBonus(LGBonus bonusType, ArmorStand armorStand){
         if(this.hasBonus()){
             if(this.enableBonus) return;
             this.enableBonus = true;
@@ -139,7 +143,9 @@ public class LGGamePlayer extends HyriGamePlayer {
 
         if(this.isDead()) return;
 
-        armorStand.remove();
+        if(armorStand != null) {
+            armorStand.remove();
+        }
 
         this.setBonus(bonusType);
         bonusType.active(this, this.plugin);
@@ -151,9 +157,11 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.getPlayer().sendMessage(ChatColor.DARK_AQUA + HyriLanguageMessage.get("bonus.pickup.title").getValue(this.getPlayer()) + " " + ChatColor.RESET + bonusType.getLanguageName().getValue(this.getPlayer()));
         this.getPlayer().sendMessage(ChatColor.DARK_AQUA + HyriLanguageMessage.get("bonus.pickup.description").getValue(this.getPlayer()) + ChatColor.GRAY + bonusType.getLanguageDescription().getValue(this.getPlayer()));
 
-        LGBonusEntity bonus = this.plugin.getGame().getBonus(armorStand.getUniqueId());
-        if(bonus != null)
-            bonus.respawn();
+        if(armorStand != null) {
+            LGBonusEntity bonus = this.plugin.getGame().getBonus(armorStand.getUniqueId());
+            if (bonus != null)
+                bonus.respawn();
+        }
     }
 
     public void setScoreboard(LGScoreboard scoreboard) {
