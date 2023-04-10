@@ -20,9 +20,12 @@ public class TestCommand extends HyriCommand<HyriLaserGame> {
         this.handleArgument(ctx, "bonus", output -> {
             if(ctx.getSender() instanceof Player) {
                 Player player = (Player) ctx.getSender();
+
+                ctx.getSender().sendMessage("Le menu bonus a été ouvert.");
                 new BonusMenuGui(this.plugin, player).open();
+                return;
             }
-            ctx.getSender().sendMessage("test");
+            ctx.getSender().sendMessage("Vous devez etre un joueur.");
         });
     }
 }
