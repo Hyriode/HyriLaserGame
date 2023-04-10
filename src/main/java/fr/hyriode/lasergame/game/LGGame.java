@@ -16,9 +16,7 @@ import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Area;
 import fr.hyriode.lasergame.HyriLaserGame;
-import fr.hyriode.lasergame.api.player.HyriLGPlayer;
-import fr.hyriode.lasergame.game.bonus.LGBonus;
-import fr.hyriode.lasergame.game.bonus.effect.SphereEffect;
+import fr.hyriode.lasergame.game.bonus.LGBonusEntity;
 import fr.hyriode.lasergame.game.item.LGLaserGun;
 import fr.hyriode.lasergame.game.map.LGMapRendererWin;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
@@ -45,7 +43,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     private final HyriLaserGame plugin;
 
-    private final List<LGBonus> bonus;
+    private final List<LGBonusEntity> bonus;
 
     private boolean doorOpen;
     private boolean finalKill = false;
@@ -53,7 +51,13 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     private boolean isStarted = false;
 
     public LGGame(IHyrame hyrame, HyriLaserGame plugin) {
-        super(hyrame, plugin, HyriAPI.get().getConfig().isDevEnvironment() ? new LGGameInfo("lasergame", "LaserGame") : HyriAPI.get().getGameManager().getGameInfo("lasergame"), LGGamePlayer.class, HyriAPI.get().getConfig().isDevEnvironment() ? LGGameType.FIVE_FIVE : HyriGameType.getFromData(LGGameType.values()));
+        super(hyrame, plugin, HyriAPI.get().getConfig().isDevEnvironment()
+                        ? HyriAPI.get().getGameManager().createGameInfo("lasergame", "LaserGame")
+                        : HyriAPI.get().getGameManager().getGameInfo("lasergame"),
+                LGGamePlayer.class,
+                HyriAPI.get().getConfig().isDevEnvironment()
+                        ? LGGameType.FIVE_FIVE
+                        : HyriGameType.getFromData(LGGameType.values()));
 
         this.plugin = plugin;
 
@@ -81,7 +85,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 .collect(Collectors.toList()).forEach(Entity::remove);
 
         this.plugin.getConfiguration().getBonusLocation()
-                .forEach(location -> Bukkit.getScheduler().runTaskLater(this.plugin, () -> LGBonus.spawn(location, this.plugin), 20));
+                .forEach(location -> Bukkit.getScheduler().runTaskLater(this.plugin, () -> LGBonusEntity.spawn(location, this.plugin), 20));
 
         for (LGGamePlayer player : this.players) {
             Player p = player.getPlayer();
@@ -232,13 +236,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         super.win(winner);
         System.out.println("Game down");
         this.players.forEach(gamePlayer -> {
-            if(winner.contains(gamePlayer)){
-                final HyriLGPlayer pl = gamePlayer.getAccount();
-
-                pl.setCurrentWinStreak(pl.getCurrentWinStreak() + 1);
-                pl.setBestWinStreak(pl.getBestWinStreak() + 1);
-                pl.update(gamePlayer);
-            }
+            gamePlayer.updateStatistics(gamePlayer.getTeam().equals(winner));
 
             final Player player = gamePlayer.getPlayer();
             final List<String> killsLines = new ArrayList<>();
@@ -256,19 +254,16 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                     continue;
                 }
 
-                killsLines.add(line.replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(endPlayer.getUniqueId()).getNameWithRank(true))
+                killsLines.add(line.replace("%player%", endPlayer.asHyriPlayer().getNameWithRank())
                         .replace("%kills%", String.valueOf(endPlayer.getAllPoints())));
             }
 
             final int kills = gamePlayer.getKills();
             final boolean isWinner = winner.contains(gamePlayer);
 
-            final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayedTime(), isWinner);
-            final long xp = HyriRewardAlgorithm.getXP(kills, gamePlayer.getPlayedTime(), isWinner);
-            final List<String> rewards = new ArrayList<>();
-
-            rewards.add(ChatColor.LIGHT_PURPLE + String.valueOf(hyris) + " Hyris");
-            rewards.add(ChatColor.GREEN + String.valueOf(xp) + " XP");
+            final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayTime(), isWinner);
+            final double xp = HyriRewardAlgorithm.getXP(kills, gamePlayer.getPlayTime(), isWinner);
+            String rewards = ChatColor.LIGHT_PURPLE + String.valueOf(hyris) + " Hyris " + ChatColor.GREEN + String.valueOf(xp) + " XP";
 
             IHyriPlayer p = HyriAPI.get().getPlayerManager().getPlayer(gamePlayer.getUniqueId());
 
@@ -350,7 +345,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     }
 
     private HyriGameTeam createTeam(ELGGameTeam gameTeam){
-        return new LGGameTeam(this, this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
+        return new LGGameTeam(this.plugin, gameTeam, ((LGGameType)this.type).getTeamsSize());
     }
 
     private void doorAnimationOpen(Location locFirst, Location locSecond, BlockState blockk){
@@ -431,22 +426,12 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         this.finalKill = true;
     }
 
-    public LGBonus getBonus(UUID uuid) {
+    public LGBonusEntity getBonus(UUID uuid) {
         return this.bonus.stream().filter(bonus -> bonus.getArmorStand().getUniqueId().equals(uuid)).findFirst().orElse(null);
     }
 
-    public List<LGBonus> getBonus() {
+    public List<LGBonusEntity> getBonus() {
         return this.bonus;
-    }
-
-    private void refreshAPIPlayer(LGGamePlayer gamePlayer) {
-        final HyriLGPlayer account = gamePlayer.getAccount();
-
-        if (this.getState() != HyriGameState.READY && this.getState() != HyriGameState.WAITING) {
-            if(account != null) {
-                account.update(gamePlayer);
-            }
-        }
     }
 
     public HyriGameTeam getAdverseTeam(HyriGameTeam team) {
@@ -457,11 +442,15 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         return null;
     }
 
-    public void addBonus(LGBonus bonus){
+    public void addBonus(LGBonusEntity bonus){
         this.bonus.add(bonus);
     }
 
     public void removeBonus(UUID uuid){
         this.bonus.removeIf(bonus -> bonus.getArmorStand().getUniqueId() == uuid);
+    }
+
+    public LGGameType getType() {
+        return (LGGameType) super.getType();
     }
 }

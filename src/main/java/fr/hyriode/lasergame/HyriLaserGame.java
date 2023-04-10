@@ -2,6 +2,7 @@ package fr.hyriode.lasergame;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.server.IHyriServer;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.utils.LocationWrapper;
@@ -103,7 +104,7 @@ public class HyriLaserGame extends JavaPlugin {
             e.printStackTrace();
         }
 
-        HyriAPI.get().getServer().setState(IHyriServer.State.READY);
+        HyriAPI.get().getServer().setState(HyggServer.State.READY);
     }
 
     @Override

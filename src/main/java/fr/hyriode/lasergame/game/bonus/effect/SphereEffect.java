@@ -27,16 +27,21 @@ public class SphereEffect {
     private final LGGamePlayer player;
     private final HyriLaserGame plugin;
     private BukkitTask timer;
-
+    private int time = 0;
 
     public SphereEffect(HyriLaserGame plugin, LGGamePlayer player) {
         this.plugin = plugin;
         this.player = player;
+        this.time = time;
     }
 
     public void start() {
         LGGame game = this.plugin.getGame();
         this.timer = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> {
+            if(this.player == null || this.player.getPlayer().isDead()) {
+                this.stop();
+                return;
+            }
             List<Player> players = game.getPlayers().stream()
                     .map(HyriGameSpectator::getPlayer)
                     .filter(player -> !player.getUniqueId().equals(this.player.getUniqueId()))

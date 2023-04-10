@@ -39,8 +39,7 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    shadow 'xyz.xenondevs:particle:1.7'
-    implementation 'fr.hyriode:hyrame:1.3.4'
+    implementation 'fr.hyriode:hyrame:1.3.9-SNAPSHOT'
 }
 
 processResources {

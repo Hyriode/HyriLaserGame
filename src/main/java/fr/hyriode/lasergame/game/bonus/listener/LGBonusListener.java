@@ -2,7 +2,7 @@ package fr.hyriode.lasergame.game.bonus.listener;
 
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.lasergame.HyriLaserGame;
-import fr.hyriode.lasergame.game.bonus.LGBonus;
+import fr.hyriode.lasergame.game.bonus.LGBonusEntity;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -35,7 +35,7 @@ public class LGBonusListener extends HyriListener<HyriLaserGame> {
         final Location loc = event.getTo();
         LGGamePlayer player = this.plugin.getGame().getPlayer(event.getPlayer().getUniqueId());
 
-        for (LGBonus locBonus : this.plugin.getGame().getBonus()) {
+        for (LGBonusEntity locBonus : this.plugin.getGame().getBonus()) {
             if(this.isInBonus(loc, locBonus.getLocation())){
                 if(!player.hasBonus()) {
                     player.activeBonus(locBonus.getArmorStand());

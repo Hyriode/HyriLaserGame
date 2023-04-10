@@ -10,6 +10,8 @@ import fr.hyriode.hyrame.utils.target.TargetInfo;
 import fr.hyriode.hyrame.utils.target.TargetProvider;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.game.LGGame;
+import fr.hyriode.lasergame.game.bonus.BonusManager;
+import fr.hyriode.lasergame.game.bonus.LGBonus;
 import fr.hyriode.lasergame.game.bonus.LGBonusType;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import org.bukkit.*;
@@ -27,7 +29,6 @@ import xyz.xenondevs.particle.data.color.RegularColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LGLaserGun extends HyriItem<HyriLaserGame> {
@@ -37,7 +38,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
     private boolean enable;
 
     public LGLaserGun(HyriLaserGame plugin) {
-        super(plugin, "lasergun", () -> HyriLanguageMessage.get("item.lasergun"), ArrayList::new, Material.IRON_HOE);
+        super(plugin, "lasergun", () -> HyriLanguageMessage.get("item.lasergun"), () -> null, Material.IRON_HOE);
         this.enable = false;
     }
 
@@ -59,7 +60,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
         if(!enable) return;
         LGGame game = this.plugin.getGame();
         LGGamePlayer killer = game.getPlayer(player.getUniqueId());
-        boolean isFaster = killer.hasBonus() && killer.getBonus() == LGBonusType.SHOOT_FASTER;
+        boolean isFaster = killer.hasBonus() && killer.getBonus() == LGBonusType.SHOOT_FASTER.get();
 
         if((!killer.isCooldown() || isFaster) && !killer.isDead()) {
             final double maxRange = this.plugin.getConfiguration().getLaserRange();
@@ -90,7 +91,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
                 }else {
 
                     LGGamePlayer targetPlayer = game.getPlayer(targetInfo.getEntity().getUniqueId());
-                    boolean isShieldTarget = targetPlayer.hasBonus() && targetPlayer.getBonus() == LGBonusType.SHIELD;
+                    boolean isShieldTarget = targetPlayer.hasBonus() && targetPlayer.getBonus().getName().equals(BonusManager.SHIELD);
 
                     if (!targetPlayer.isDead() && !targetPlayer.isSpectator() && !isShieldTarget) {
                         new ActionBar(ChatColor.GREEN + "+1 Kill").send(player);
@@ -150,7 +151,8 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
                 @Override
                 public void run() {
                     player.getPlayer().setExp((float) i / 10);//5
-                    if(i >= 10 || player.getBonus() == LGBonusType.SHOOT_FASTER){
+                    LGBonus bonus = player.getBonus();
+                    if(i >= 10 || bonus != null && bonus.getName().equals(BonusManager.SHOOT_FASTER)){
                         player.getPlayer().setExp(1.0F);
                         player.setCooldown(false);
                         cancel();

@@ -1,14 +1,14 @@
 package fr.hyriode.lasergame.configuration;
 
+import fr.hyriode.api.config.IHyriConfig;
 import fr.hyriode.hyrame.utils.Area;
 import fr.hyriode.hyrame.utils.LocationWrapper;
-import fr.hyriode.hystia.api.config.IConfig;
 import org.bukkit.Location;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LGConfiguration implements IConfig {
+public class LGConfiguration implements IHyriConfig {
 
     private final List<Team> teams;
 

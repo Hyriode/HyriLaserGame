@@ -1,64 +1,76 @@
 package fr.hyriode.lasergame.game.bonus;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.lasergame.HyriLaserGame;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+import fr.hyriode.lasergame.game.player.LGGamePlayer;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.function.BiConsumer;
 
 public class LGBonus {
 
-    private static final String ISBONUS_METADATA = "IsBonus";
+    private final String name;
+    private final int timeSecond;
 
-    private ArmorStand armorStand;
-    private final HyriLaserGame plugin;
-    private final Location location;
+    protected BiConsumer<LGGamePlayer, HyriLaserGame> before;
+    protected BiConsumer<LGGamePlayer, HyriLaserGame> after;
 
-    public LGBonus(ArmorStand armorStand, Location location, HyriLaserGame plugin){
-        this.armorStand = armorStand;
-        this.location = location;
-        this.plugin = plugin;
+    public LGBonus(String name, int timeSecond, BiConsumer<LGGamePlayer, HyriLaserGame> before, BiConsumer<LGGamePlayer, HyriLaserGame> after){
+        this.name = name;
+        this.timeSecond = timeSecond;
+        this.before = before;
+        this.after = after;
     }
 
-    public static LGBonus spawn(Location location, HyriLaserGame plugin){
-        ArmorStand armorStand = location.getWorld().spawn(location.clone(), ArmorStand.class);
-
-        armorStand.setVisible(false);
-        armorStand.setHelmet(new ItemStack(Material.GOLD_BLOCK));
-        armorStand.setGravity(false);
-        armorStand.setCanPickupItems(false);
-        armorStand.setBasePlate(false);
-        armorStand.setMetadata(ISBONUS_METADATA, new FixedMetadataValue(plugin, true));
-
-        new ILGBonusAnimation.Default(plugin, location, armorStand).start();
-        LGBonus bonus = new LGBonus(armorStand, location, plugin);
-        plugin.getGame().addBonus(bonus);
-        return bonus;
+    public LGBonus(String name, int timeSecond){
+        this(name, timeSecond, (player, plugin) -> {}, (player, plugin) -> {});
     }
 
-    public void respawn(){
-        this.removeBonus();
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            this.armorStand = spawn(location, plugin).getArmorStand();
-        }, 20*25);
+    public String getName() {
+        return name;
     }
 
-    public ArmorStand getArmorStand() {
-        return this.armorStand;
+    public HyriLanguageMessage getLanguageName() {
+        return HyriLanguageMessage.get("bonus."+name+".name");
     }
 
-    public Location getLocation() {
-        return this.location;
+    public HyriLanguageMessage getLanguageDescription() {
+        return HyriLanguageMessage.get("bonus."+name+".description");
     }
 
-    public static String getIsBonusMetadata() {
-        return ISBONUS_METADATA;
+    public int getTimeSecond() {
+        return timeSecond * 20;
     }
 
-    private void removeBonus(){
-        this.plugin.getGame().removeBonus(this.armorStand.getUniqueId());
-        this.armorStand.remove();
+    public void active(LGGamePlayer player, HyriLaserGame plugin){
+        Player pl = player.getPlayer();
+        if(player.hasBonus()){
+            int time = this.getTimeSecond();
+            this.before.accept(player, plugin);
+            new BukkitRunnable(){
+                int i = 0;
+                @Override
+                public void run() {
+                    if(!player.isDead() && i < time && player.hasBonus()) {
+                        ++i;
+                        new ActionBar(ChatColor.DARK_AQUA + "Bonus: " + ChatColor.WHITE + player.getBonus().getLanguageName().getValue(pl) + " (" + (time / 20 - i / 20) + "s)").send(pl);
+                        return;
+                    }
+                    after.accept(player, plugin);
+                    new ActionBar(ChatColor.RED + "").send(pl);
+                    pl.getActivePotionEffects().forEach(potionEffect -> pl.removePotionEffect(potionEffect.getType()));
+                    pl.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
+                    player.setBonus(null);
+                    cancel();
+                }
+            }.runTaskTimer(plugin, 0L, 1L);
+        }
     }
+
+
 }
