@@ -69,16 +69,50 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     public void kill(){
         if(player == null) return;
-        this.player.teleport(this.getRandomSpawn());
+        int timeDeath = 5;
         this.giveDeathArmor();
+        this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * timeDeath, 1, true, true));
         this.player.playSound(this.player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
         this.setDead(HyriGameDeathEvent.Reason.PLAYERS, new ArrayList<>());
+
+        final HyriLanguageMessage dead = new HyriLanguageMessage("")
+                .addValue(HyriLanguage.EN, "DEAD")
+                .addValue(HyriLanguage.FR, "MORT");
+
+        new BukkitRunnable(){
+            int i = timeDeath;
+            @Override
+            public void run() {
+                if(plugin.getGame().getState() != HyriGameState.ENDED) {
+                    if (i == 0) {
+                        Title.sendTitle(player, " ", null, 1, 1, 1);
+                        new ActionBar(String.format(HyriLanguageMessage.get("player.death.subtitle.good").getValue(player), i)).send(player);
+                        this.cancel();
+                        return;
+                    }
+                    Title.sendTitle(player, ChatColor.RED + " " + dead.getValue(player), String.format(HyriLanguageMessage.get("player.death.subtitle").getValue(player), i), 1, 20, 1);
+                    --i;
+                }else this.cancel();
+            }
+        }.runTaskTimer(this.plugin, 0L, 20L);
+
         this.player.sendMessage(HyriLanguageMessage.get("player.death.title").getValue(this.player));
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
+            if(this.plugin.getGame().getState() != HyriGameState.ENDED) {
+                this.setNotDead();
+                this.playReviveSound(player);
+                this.giveArmor();
+            }
+        }, 20L * timeDeath);
     }
 
-    private Location getRandomSpawn() {
-        final List<LocationWrapper> spawns = this.plugin.getConfiguration().getSpawnLocations();
-        return spawns.get(ThreadLocalRandom.current().nextInt(spawns.size())).asBukkit();
+    public void playReviveSound(final Player player) {
+        for (int i = 0; i < 5; i++) {
+            float volume = 0.5F + i * 0.2F;
+            int ticks = i * 3;
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> player.playSound(player.getLocation(), Sound.DRINK, 1, volume), ticks);
+        }
     }
 
     public void respawn() {
@@ -220,7 +254,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         return points;
     }
 
-    public int getAllPoints(){
+    public int getTotalPoints(){
         int kills = 0;
         int deaths = 0;
         int points = 0;

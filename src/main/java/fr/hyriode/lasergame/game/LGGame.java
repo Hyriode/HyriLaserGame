@@ -15,7 +15,6 @@ import fr.hyriode.hyrame.game.util.HyriRewardAlgorithm;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Area;
-import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.game.bonus.LGBonusEntity;
 import fr.hyriode.lasergame.game.item.LGLaserGun;
@@ -108,27 +107,28 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                         if(player == null) return;
                         String text = ChatColor.AQUA + "" + i;
                         String msg = ChatColor.DARK_AQUA + HyriLanguageMessage.get("game.starting-in").getValue(player) + " ";
+                        String secondsText = HyriLanguageMessage.get("game.seconds").getValue(player);
                         switch (i){ //TODO refaire ce code foireux
                             case 3:
                                 text = ChatColor.YELLOW + "" + i;
-                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " seconds");
+                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " " + secondsText);
                                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                                 Title.sendTitle(player.getPlayer(), text, null, 1, 20, 1);
                                 break;
                             case 2:
                                 text = ChatColor.GOLD + "" + i;
-                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " seconds");
+                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " " + secondsText);
                                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                                 Title.sendTitle(player.getPlayer(), text, null, 1, 20, 1);
                                 break;
                             case 1:
                                 text = ChatColor.RED + "" + i;
-                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " seconds");
+                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " " + secondsText);
                                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                                 Title.sendTitle(player.getPlayer(), text, null, 1, 20, 1);
                                 break;
                             case 10:
-                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " seconds");
+                                player.sendMessage(msg + text + ChatColor.DARK_AQUA + " " + secondsText);
                                 Title.sendTitle(player.getPlayer(), text, null, 1, 20, 1);
                                 break;
                             case 0:
@@ -241,7 +241,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
         final List<LGGamePlayer> topPoints = new ArrayList<>(this.players);
 
-        topPoints.sort((o1, o2) -> o2.getAllPoints() - o1.getAllPoints());
+        topPoints.sort((o1, o2) -> o2.getTotalPoints() - o1.getTotalPoints());
 
         final Function<Player, List<String>> pointsLineProvider = player -> {
             final List<String> pointsLine = new ArrayList<>();
@@ -254,7 +254,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                     final LGGamePlayer topKiller = topPoints.get(i);
 
                     pointsLine.add(killerLine.replace("%player%", topKiller.formatNameWithTeam())
-                            .replace("%kills%", String.valueOf(topKiller.getKills())));
+                            .replace("%kills%", String.valueOf(topKiller.getTotalPoints())));
                     continue;
                 }
 
@@ -345,7 +345,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         int pointsTeam = 0;
 
         for(HyriGamePlayer player : team.getPlayers()){
-            pointsTeam += this.getPlayer(player.getPlayer()).getAllPoints();
+            pointsTeam += this.getPlayer(player.getPlayer()).getTotalPoints();
         }
 
         return pointsTeam;

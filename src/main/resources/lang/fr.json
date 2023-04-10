@@ -1,5 +1,6 @@
 {
   "game.description": "Tirez sur les adversaires pour les mettre hors-jeu et\nrécupérez les bonus de la carte. Accumulez les points et\ngagnez la partie en tuant le plus d'adversaires",
+  "game.seconds": "secondes",
 
   "blue.display": "Bleu",
   "red.display": "Rouge",
@@ -20,7 +21,7 @@
   "scoreboard.suddendeath.display": "Mort subite",
   "scoreboard.points.display": "Points",
   "scoreboard.bonus.display": "Bonus",
-  "scoreboard.team.display": "Team",
+  "scoreboard.team.display": "Equipe",
 
   "map.title.victory": "VICTOIRE",
   "map.title.defeat": "DEFAITE",
@@ -53,7 +54,7 @@
   "game.timer.can-shoot": "Vous pouvez tirer dans",
   "game.starting-in": "Commencement dans",
 
-  "message.game.end.points": "%position% Points §7- %player% §7- %kills%",
+  "message.game.end.points": "%position% %player% §7- §b%kills%",
   "message.game.end.1": "§e1er",
   "message.game.end.2": "§62ème",
   "message.game.end.3": "§c3ème",

@@ -1,5 +1,6 @@
 {
   "game.description": "Shoot the opponents to put them out of the game and\ncollect the bonuses of the card. Accumulate points and\nwin the game by killing the most opponents",
+  "game.seconds": "seconds",
 
   "blue.display": "Blue",
   "red.display": "Red",
@@ -54,7 +55,7 @@
   "game.timer.can-shoot": "You can shoot in",
   "game.starting-in": "Starting in",
 
-  "message.game.end.points": "%position% Points §7- %player% §7- %kills%",
+  "message.game.end.points": "%position% %player% §7- §b%kills%",
   "message.game.end.1": "§e1st",
   "message.game.end.2": "§62nd",
   "message.game.end.3": "§c3th",
