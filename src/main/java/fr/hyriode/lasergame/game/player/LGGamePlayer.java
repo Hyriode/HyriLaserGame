@@ -7,9 +7,11 @@ import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
+import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.title.Title;
+import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.api.player.LGPlayerStatistics;
@@ -67,7 +69,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         this.player.setHealth(20.0F);
     }
 
-    public void kill(){
+    public void kill(LGGamePlayer killer){
         if(player == null) return;
         int timeDeath = 5;
         this.giveDeathArmor();
@@ -96,7 +98,9 @@ public class LGGamePlayer extends HyriGamePlayer {
             }
         }.runTaskTimer(this.plugin, 0L, 20L);
 
-        this.player.sendMessage(HyriLanguageMessage.get("player.death.title").getValue(this.player));
+        BroadcastUtil.broadcast(p -> HyriLanguageMessage.get("player.death.chat").getValue(p)
+                .replace("%victim%", this.getTeam().getColor().getChatColor() + this.player.getName())
+                .replace("%killer%", killer.getTeam().getColor().getChatColor() + killer.getPlayer().getName()));
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             if(this.plugin.getGame().getState() != HyriGameState.ENDED) {

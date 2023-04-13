@@ -277,7 +277,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
             gamePlayer.updateStatistics(gamePlayer.getTeam().equals(winner));
 
             final UUID playerId = gamePlayer.getUniqueId();
-            final int kills = gamePlayer.getKills();
+            final int kills = gamePlayer.getKills() / 2;
             final boolean isWinner = winner.contains(gamePlayer);
 
             final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayTime(), isWinner);

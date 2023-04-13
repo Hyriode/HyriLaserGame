@@ -16,14 +16,11 @@ public class LGConfiguration implements IHyriConfig {
 
     private final HyriWaitingRoom.Config waitingRoom;
     private final List<LocationWrapper> bonusLocation;
-    private final List<LocationWrapper> spawnLocations;
 
-    public LGConfiguration(List<Team> teams, HyriWaitingRoom.Config waitingRoom, List<LocationWrapper> bonusLocation,
-                           List<LocationWrapper> spawnLocations){
+    public LGConfiguration(List<Team> teams, HyriWaitingRoom.Config waitingRoom, List<LocationWrapper> bonusLocation){
         this.teams = teams;
         this.waitingRoom = waitingRoom;
         this.bonusLocation = bonusLocation;
-        this.spawnLocations = spawnLocations;
     }
 
     public List<Team> getTeams() {
@@ -36,10 +33,6 @@ public class LGConfiguration implements IHyriConfig {
 
     public List<Location> getBonusLocation() {
         return this.bonusLocation.stream().map(LocationWrapper::asBukkit).collect(Collectors.toList());
-    }
-
-    public List<LocationWrapper> getSpawnLocations() {
-        return spawnLocations;
     }
 
     public HyriWaitingRoom.Config getWaitingRoom() {

@@ -11,7 +11,7 @@
   "player.death.title": "&cVous êtes mort!",
   "player.death.subtitle": "&cVous pourrez tirer dans %ss",
   "player.death.subtitle.good": "&aVous pouvez tirer",
-  "player.death.chat": "%s a été touché",
+  "player.death.chat": "%victim% §7a été touché par %killer%.",
 
   "scoreboard.kills.display": "Eliminations: ",
   "scoreboard.deaths.display": "Morts: ",

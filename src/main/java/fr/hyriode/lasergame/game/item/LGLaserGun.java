@@ -98,7 +98,7 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
                         new ActionBar(ChatColor.GREEN + "+1 Kill").send(player);
                         player.sendMessage(ChatColor.GREEN + "+1 Kill");
 
-                        targetPlayer.kill();
+                        targetPlayer.kill(killer);
                         targetPlayer.addDeath();
 
                         killer.addKill();

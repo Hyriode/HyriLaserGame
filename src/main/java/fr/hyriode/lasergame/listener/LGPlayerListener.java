@@ -4,6 +4,7 @@ import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.lasergame.HyriLaserGame;
+import fr.hyriode.lasergame.game.LGGame;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -44,11 +45,17 @@ public class LGPlayerListener extends HyriListener<HyriLaserGame> {
     @EventHandler
     public void onMovePlayer(PlayerMoveEvent event){
         final Player player = event.getPlayer();
-        final LGGamePlayer gamePlayer = this.plugin.getGame().getPlayer(player);
+        LGGame game = this.plugin.getGame();
+        final LGGamePlayer gamePlayer = game.getPlayer(player);
         if(gamePlayer == null) return;
 
-        if(player.getLocation().getY() < 10){
+        if(game.getState() == HyriGameState.PLAYING && player.getLocation().getY() < 10){
             player.teleport(this.plugin.getConfiguration().getTeam(gamePlayer.getTeam().getName()).getSpawnLocation());
+            return;
+        }
+        Location spawn = this.plugin.getConfiguration().getWaitingRoom().getSpawn().asBukkit();
+        if(game.getState() == HyriGameState.WAITING && player.getLocation().getY() < spawn.getBlockY() - 15){
+            player.teleport(spawn);
         }
     }
 
