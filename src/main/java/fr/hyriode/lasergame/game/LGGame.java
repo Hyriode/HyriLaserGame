@@ -234,9 +234,9 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     public void win(HyriGameTeam winner) {
         super.win(winner);
 
-        for (LGGamePlayer player : this.getOnlinePlayers()) {
-            this.giveResultMap(player.getPlayer());
-        }
+//        for (LGGamePlayer player : this.getOnlinePlayers()) {
+//            this.giveResultMap(player.getPlayer());
+//        }
 
         List<HyriLanguageMessage> positions = Arrays.asList(
                 HyriLanguageMessage.get("message.game.end.1"),
