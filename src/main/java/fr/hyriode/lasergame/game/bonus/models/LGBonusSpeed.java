@@ -10,9 +10,7 @@ public class LGBonusSpeed extends LGBonus {
     public LGBonusSpeed() {
         super(SPEED, 10, (player, __) -> player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20*10, 0, true, true)),
                 (player, __) -> {
-            if(!player.isDead()) {
-                player.getPlayer().removePotionEffect(PotionEffectType.SPEED);
-            }
+//                player.getPlayer().removePotionEffect(PotionEffectType.SPEED);
         });
     }
 }

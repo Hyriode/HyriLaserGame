@@ -8,6 +8,10 @@ public class LGBonusInversion extends LGBonus {
 
     public LGBonusInversion() {
         super(INVERSION, 10, (player, __) -> player.giveInverseArmor(),
-                (player, __) -> player.giveArmor());
+                (player, __) -> {
+            if(!player.isDead()) {
+                player.giveArmor();
+            }
+        });
     }
 }

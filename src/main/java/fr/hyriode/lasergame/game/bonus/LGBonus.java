@@ -63,7 +63,7 @@ public class LGBonus {
                     }
                     after.accept(player, plugin);
                     new ActionBar(ChatColor.RED + "").send(pl);
-                    pl.getActivePotionEffects().forEach(potionEffect -> pl.removePotionEffect(potionEffect.getType()));
+//                    pl.getActivePotionEffects().forEach(potionEffect -> pl.removePotionEffect(potionEffect.getType()));
                     pl.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
                     player.setBonus(null);
                     cancel();
