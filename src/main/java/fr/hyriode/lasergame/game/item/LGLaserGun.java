@@ -93,24 +93,25 @@ public class LGLaserGun extends HyriItem<HyriLaserGame> {
 
                     if (targetPlayer != null && !targetPlayer.isDead() && !targetPlayer.isSpectator()) {
                         boolean isShieldTarget = targetPlayer.hasBonus() && targetPlayer.getBonus().getName().equals(BonusManager.SHIELD);
-                        if(isShieldTarget) return;
+                        if(!isShieldTarget) {
 
-                        new ActionBar(ChatColor.GREEN + "+1 Kill").send(player);
-                        player.sendMessage(ChatColor.GREEN + "+1 Kill");
+                            new ActionBar(ChatColor.GREEN + "+1 Kill").send(player);
+                            player.sendMessage(ChatColor.GREEN + "+1 Kill");
 
-                        targetPlayer.kill(killer);
-                        targetPlayer.addDeath();
+                            targetPlayer.kill(killer);
+                            targetPlayer.addDeath();
 
-                        killer.addKill();
-                        killer.addKillStreak();
-                        killer.setBestKillStreak();
+                            killer.addKill();
+                            killer.addKillStreak();
+                            killer.setBestKillStreak();
 
-                        targetPlayer.setKillStreak(0);
+                            targetPlayer.setKillStreak(0);
 
-                        this.playHitSound(player);
-                        this.playDeathSound((Player) targetInfo.getEntity());
-                        if (game.isFinalKill()) {
-                            game.win(game.getWinner());
+                            this.playHitSound(player);
+                            this.playDeathSound((Player) targetInfo.getEntity());
+                            if (game.isFinalKill()) {
+                                game.win(game.getWinner());
+                            }
                         }
                     }
                 }

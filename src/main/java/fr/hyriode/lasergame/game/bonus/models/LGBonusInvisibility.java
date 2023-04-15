@@ -21,6 +21,7 @@ public class LGBonusInvisibility extends LGBonus {
                     });
             });
         }, (player, plugin) -> {
+            player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
             plugin.getGame().getTeams().forEach(team -> {
                 if(!team.getName().equals(player.getTeam().getName()))
                     team.getPlayers().forEach(p -> {
