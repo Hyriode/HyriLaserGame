@@ -28,6 +28,7 @@
   "map.player.title": "Vous",
   "map.player.deaths": "Morts",
   "map.player.kills": "Eliminations",
+  "map.name": "Resultat",
 
   "game.suddendeath.title": "Mort Subite",
   "game.suddendeath.subtitle": "Tue pour terminer la party",

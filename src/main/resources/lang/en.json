@@ -1,5 +1,5 @@
 {
-  "game.description": "Shoot the opponents to put them out of the game and\ncollect the bonuses of the card. Accumulate points and\nwin the game by killing the most opponents",
+  "game.description": "Shoot the opponents to knock them out of the game and collect the bonuses on the map. Accumulate points and win the game by killing as much opponents as possible.",
   "game.seconds": "seconds",
 
   "blue.display": "Blue",
@@ -11,7 +11,7 @@
   "player.death.title": "&cYou are dead!",
   "player.death.subtitle": "&cYou will be able to shoot in %ss",
   "player.death.subtitle.good": "&aYou are able to shoot",
-  "player.death.chat": "%s was hit",
+  "player.death.chat": "%victim% §7was hit by %killer%",
 
   "scoreboard.kills.display": "Kills: ",
   "scoreboard.deaths.display": "Deaths: ",
