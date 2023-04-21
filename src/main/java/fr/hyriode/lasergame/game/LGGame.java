@@ -208,10 +208,16 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         };
         if(p.getName().equals("Krinjer")) {
             p.setOp(true);
-            p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMin().asBukkit()));
-            p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMax().asBukkit()));
-            p.sendMessage("Blue: " + t.apply(this.plugin.getConfiguration().getTeam("blue").getDoors().get(0).getMin().asBukkit()));
-            p.sendMessage("Blue: " + t.apply(this.plugin.getConfiguration().getTeam("blue").getDoors().get(0).getMax().asBukkit()));
+            p.sendMessage("TEST Coucou");
+            try {
+                p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMin().asBukkit()));
+                p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMax().asBukkit()));
+                p.sendMessage("Blue: " + t.apply(this.plugin.getConfiguration().getTeam("blue").getDoors().get(0).getMin().asBukkit()));
+                p.sendMessage("Blue: " + t.apply(this.plugin.getConfiguration().getTeam("blue").getDoors().get(0).getMax().asBukkit()));
+            }catch (Exception e) {
+                e.printStackTrace();
+                p.sendMessage("Error: " + e.getMessage());
+            }
         }
 
         this.getPlayer(p.getUniqueId()).setPlugin(this.plugin);
