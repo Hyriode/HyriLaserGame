@@ -102,7 +102,6 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 }
                 if(i >= 0){
                     players.forEach(p -> {
-                        System.out.println("Player " + p.getPlayer().getName());
                         Player player = p.getPlayer();
                         if(player == null) return;
                         String text = ChatColor.AQUA + "" + i;
@@ -209,22 +208,16 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     @Override
     public void handleLogout(Player p) {
+        LGGamePlayer lgPlayer = this.getPlayer(p.getUniqueId());
         super.handleLogout(p);
         if(this.getState() == HyriGameState.PLAYING) {
-            if (this.players.isEmpty()) {
-                this.win(this.getWinner());
+            if (this.getOnlinePlayers().size() <= 1) {
+                this.win(this.getAdverseTeam(lgPlayer.getTeam()));
             } else {
                 for (HyriGameTeam team : this.teams) {
                     if (team.getPlayers().size() <= 0) {
-                        this.win(this.getWinner());
+                        this.win(this.getAdverseTeam(lgPlayer.getTeam()));
                     }
-                }
-            }
-
-            for (LGGameTeam lgTeam : this.getLGTeams()) {
-                if(lgTeam.getPlayers().size() <= 1) {
-                    this.win(this.getWinner());
-                    break;
                 }
             }
         }
@@ -234,9 +227,9 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     public void win(HyriGameTeam winner) {
         super.win(winner);
 
-        for (LGGamePlayer player : this.getOnlinePlayers()) {
-            this.giveResultMap(player.getPlayer());
-        }
+//        for (LGGamePlayer player : this.getOnlinePlayers()) {
+//            this.giveResultMap(player.getPlayer());
+//        }
 
         List<HyriLanguageMessage> positions = Arrays.asList(
                 HyriLanguageMessage.get("message.game.end.1"),
@@ -362,7 +355,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     private void kickPlayersInBase(Location locFirst, Location locSecond, Location spawnLoc) {
         Area area = new Area(locFirst, locSecond);
-        this.plugin.getGame().getPlayers().forEach(player -> {
+        this.getOnlinePlayers().forEach(player -> {
             if(area.isInArea(player.getPlayer().getLocation())){
                 player.getPlayer().teleport(spawnLoc);
             }
@@ -391,6 +384,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 EntityFallingBlock fallingBlock = ((CraftFallingSand) locFirst.getWorld().spawnFallingBlock(loc, blockk.getType(), blockk.getData().getData())).getHandle();
 //                EntityFallingBlock fallingBlock = new EntityFallingBlock(((CraftWorld) IHyrame.WORLD.get()).getHandle(), x, y, fz, CraftMagicNumbers.getBlock(blockk.getBlock()).getBlockData());
                 fallingBlock.noclip = true;
+
 //                ((CraftWorld) IHyrame.WORLD.get()).getHandle().addEntity(fallingBlock);
 
                 new BukkitRunnable(){

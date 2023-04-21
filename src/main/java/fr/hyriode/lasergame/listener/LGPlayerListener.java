@@ -54,7 +54,7 @@ public class LGPlayerListener extends HyriListener<HyriLaserGame> {
             return;
         }
         Location spawn = this.plugin.getConfiguration().getWaitingRoom().getSpawn().asBukkit();
-        if(game.getState() == HyriGameState.WAITING && player.getLocation().getY() < spawn.getBlockY() - 15){
+        if((game.getState() == HyriGameState.WAITING || game.getState() == HyriGameState.READY) && player.getLocation().getY() < spawn.getBlockY() - 15){
             player.teleport(spawn);
         }
     }
