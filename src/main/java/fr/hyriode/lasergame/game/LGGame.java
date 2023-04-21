@@ -207,7 +207,6 @@ public class LGGame extends HyriGame<LGGamePlayer> {
             return "x: " + loc.getBlockX() + " y: " + loc.getBlockY() + " z: " + loc.getBlockZ();
         };
         if(p.getName().equals("Krinjer")) {
-            p.setOp(true);
             p.sendMessage("TEST Coucou");
             try {
                 p.sendMessage("Red: " + t.apply(this.plugin.getConfiguration().getTeam("red").getDoors().get(0).getMin().asBukkit()));
