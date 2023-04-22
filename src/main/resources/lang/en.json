@@ -1,5 +1,22 @@
 {
   "game.description": "Shoot the opponents to knock them out of the game and collect the bonuses on the map. Accumulate points and win the game by killing as much opponents as possible.",
+
+  "statistics.kills.name": "Kills",
+  "statistics.deaths.name": "Deaths",
+  "statistics.points.name": "Points",
+  "statistics.bestWinStreak.name": "Best winning streak",
+  "statistics.currentWinStreak.name": "Winning streak",
+  "statistics.totalWins.name": "Total wins",
+  "statistics.totalDefeats.name": "Total defeats",
+  "statistics.games-played.name": "Played games",
+  "statistics.played-time.name": "Played time",
+  "statistics.played-time.none": "Never",
+
+  "leaderboard.experience.display": "&3Experience &8┃ &7Leaderboard",
+  "leaderboard.kills.display": "&3Kills &8┃ &7Leaderboard",
+  "leaderboard.victories.display": "&3Victories &8┃ &7Leaderboard",
+  "leaderboard.points.display": "&3Points &8┃ &7Leaderboard",
+
   "game.seconds": "seconds",
 
   "blue.display": "Blue",

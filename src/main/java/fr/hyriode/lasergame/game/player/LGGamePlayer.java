@@ -7,12 +7,10 @@ import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
-import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
-import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.lasergame.HyriLaserGame;
 import fr.hyriode.lasergame.api.player.LGPlayerStatistics;
 import fr.hyriode.lasergame.game.bonus.LGBonus;
@@ -30,7 +28,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -323,6 +320,7 @@ public class LGGamePlayer extends HyriGamePlayer {
         }else {
             statistics.setCurrentWinStreak(0);
         }
+        statistics.addPlayedGame();
 
         playerStatistics.update(this.asHyriPlayer());
     }
@@ -337,5 +335,9 @@ public class LGGamePlayer extends HyriGamePlayer {
         }
 
         return playerStatistics;
+    }
+
+    public LGPlayerStatistics.Data getAllStatistics() {
+        return this.getStatistics().getAllData();
     }
 }

@@ -1,5 +1,22 @@
 {
   "game.description": "Tirez sur les adversaires pour les mettre hors-jeu et\nrécupérez les bonus de la carte. Accumulez les points et\ngagnez la partie en tuant le plus d'adversaires",
+
+  "statistics.kills.name": "Kills",
+  "statistics.deaths.name": "Morts",
+  "statistics.points.name": "Points",
+  "statistics.bestWinStreak.name": "Meilleure série de victoire",
+  "statistics.currentWinStreak.name": "Série de victoire",
+  "statistics.totalWins.name": "Victoires totales",
+  "statistics.totalDefeats.name": "Défaites totales",
+  "statistics.games-played.name": "Parties jouées",
+  "statistics.played-time.name": "Temps joué",
+  "statistics.played-time.none": "Jamais",
+
+  "leaderboard.experience.display": "&3Expérience &8┃ &7Classement",
+  "leaderboard.kills.display": "&3Kills &8┃ &7Classement",
+  "leaderboard.victories.display": "&3Victoires &8┃ &7Classement",
+  "leaderboard.points.display": "&3Points &8┃ &7Classement",
+
   "game.seconds": "secondes",
 
   "blue.display": "Bleu",

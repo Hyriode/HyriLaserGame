@@ -23,6 +23,7 @@ import java.util.logging.Level;
 
 public class HyriLaserGame extends JavaPlugin {
 
+    public static final String ID = "lasergame";
     private IHyrame hyrame;
     private LGGame game;
 
@@ -38,6 +39,16 @@ public class HyriLaserGame extends JavaPlugin {
         if(!HyriAPI.get().getConfig().isDevEnvironment()){
             this.configuration = HyriAPI.get().getServer().getConfig(LGConfiguration.class);
         } else {
+            HyriWaitingRoom.Config wr = new HyriWaitingRoom.Config(
+                    new LocationWrapper(-0.5, 160, -1000.5, -90, 0),
+                    new LocationWrapper(21, 175, -1016),
+                    new LocationWrapper(-15, 159, -985),
+                    new LocationWrapper(-4.5, 160, -1000.5, 0, 0));
+            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "lasergame-experience", new LocationWrapper(-5.5, 189, -12.5)));
+            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "kills", new LocationWrapper(-1.5, 189, -6.5)));
+            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "victories", new LocationWrapper(-1.5, 189, 7.5)));
+            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "points", new LocationWrapper(-5.5, 189, 13.5)));
+
             this.configuration = new LGConfiguration(Arrays.asList(
                     new LGConfiguration.Team(
                             "red",
@@ -77,12 +88,7 @@ public class HyriLaserGame extends JavaPlugin {
                             new LocationWrapper(46.5, 146, 1.5, -90, 0), //spawn loc
                             new LocationWrapper(41.5, 146, 1.5, 90, 0) //spawn close
                     )
-            ), new HyriWaitingRoom.Config(
-                    new LocationWrapper(-0.5, 160, -1000.5, -90, 0),
-                    new LocationWrapper(21, 175, -1016),
-                    new LocationWrapper(-15, 159, -985),
-                    new LocationWrapper(-4.5, 160, -1000.5, 0, 0)
-            ), Arrays.asList(
+            ), wr, Arrays.asList(
                     new LocationWrapper(-3.5, 145, -3.5),
                     new LocationWrapper(-3.5, 145, 6.5),
                     new LocationWrapper(-3.5, 150, 1.5),

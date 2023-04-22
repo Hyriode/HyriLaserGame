@@ -2,6 +2,8 @@ package fr.hyriode.lasergame.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.leaderboard.IHyriLeaderboardProvider;
+import fr.hyriode.api.leveling.NetworkLeveling;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.actionbar.ActionBar;
@@ -60,11 +62,13 @@ public class LGGame extends HyriGame<LGGamePlayer> {
         this.plugin = plugin;
 
         this.description = HyriLanguageMessage.get("game.description");
+        this.reconnectionTime = 120;
 
         this.bonus = new ArrayList<>();
 
         for (ELGGameTeam team : ELGGameTeam.values())
             this.registerTeam(this.createTeam(team));
+        this.waitingRoom = new LGWaitingRoom(this, this.plugin::getConfiguration);
     }
 
     @Override
@@ -291,14 +295,24 @@ public class LGGame extends HyriGame<LGGamePlayer> {
             gamePlayer.updateStatistics(gamePlayer.getTeam().equals(winner));
 
             final UUID playerId = gamePlayer.getUniqueId();
-            final int kills = gamePlayer.getKills() / 2;
+            final int kills = gamePlayer.getKills();
             final boolean isWinner = winner.contains(gamePlayer);
 
-            final long hyris = HyriRewardAlgorithm.getHyris(kills, gamePlayer.getPlayTime(), isWinner);
-            final double xp = HyriRewardAlgorithm.getXP(kills, gamePlayer.getPlayTime(), isWinner);
+            final long hyris = HyriRewardAlgorithm.getHyris(kills / 2, gamePlayer.getPlayTime(), isWinner);
+            final double xp = HyriRewardAlgorithm.getXP(kills / 2, gamePlayer.getPlayTime(), isWinner);
             IHyriPlayer hyriPlayer = gamePlayer.asHyriPlayer();
             final String rewards = ChatColor.LIGHT_PURPLE.toString() + hyriPlayer.getHyris().add(hyris).withMessage(false).exec()
                     + " Hyris " + ChatColor.GREEN + hyriPlayer.getNetworkLeveling().addExperience(xp) + " XP";
+
+            final IHyriLeaderboardProvider provider = HyriAPI.get().getLeaderboardProvider();
+
+            provider.getLeaderboard(NetworkLeveling.LEADERBOARD_TYPE, "bedwars-experience").incrementScore(playerId, xp);
+            provider.getLeaderboard(HyriLaserGame.ID, "kills").incrementScore(playerId, kills);
+            provider.getLeaderboard(HyriLaserGame.ID, "points").incrementScore(playerId, gamePlayer.getTotalPoints());
+
+            if (isWinner) {
+                provider.getLeaderboard(HyriLaserGame.ID, "victories").incrementScore(playerId, 1);
+            }
 
             hyriPlayer.update();
 

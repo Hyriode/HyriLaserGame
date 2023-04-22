@@ -5,7 +5,6 @@ import fr.hyriode.api.mongodb.MongoSerializable;
 import fr.hyriode.api.mongodb.MongoSerializer;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.model.IHyriStatistics;
-import fr.hyriode.hyrame.game.HyriGameType;
 import fr.hyriode.lasergame.game.LGGameType;
 import org.bson.Document;
 
@@ -51,6 +50,20 @@ public class LGPlayerStatistics implements IHyriStatistics {
         return data;
     }
 
+    public Data getAllData() {
+        Data data = new Data();
+        this.data.forEach((__, d) -> {
+            data.addBestWinStreak(d.getBestWinStreak());
+            data.addCurrentWinStreak(d.getCurrentWinStreak());
+            data.addDeaths(d.getDeaths());
+            data.addKills(d.getKills());
+            data.setBestScore(d.getBestScore());
+            data.addWins(d.getTotalWins());
+            data.addPlayedGames(d.getPlayedGames());
+        });
+        return data;
+    }
+
     public static class Data implements MongoSerializable {
 
         private long kills;
@@ -60,25 +73,28 @@ public class LGPlayerStatistics implements IHyriStatistics {
         private long bestKillStreak;
         private long bestWinStreak;
         private long currentWinStreak;
+        private long playedGames;
 
         public void setKills(long kills) {
             this.kills = kills;
         }
 
-        public void addKills(int kills){
+        public void addKills(long kills){
             this.kills += kills;
+        }
+
+        public void setBestScore(long score){
+            if(score > this.bestScore) {
+                this.bestScore = score;
+            }
         }
 
         public void setDeaths(long deaths) {
             this.deaths = deaths;
         }
 
-        public void addDeaths(int deaths){
+        public void addDeaths(long deaths){
             this.deaths += deaths;
-        }
-
-        public void setBestScore(long bestScore) {
-            this.bestScore = bestScore;
         }
 
         public void setBestKillStreak(long bestKillStreak) {
@@ -94,12 +110,20 @@ public class LGPlayerStatistics implements IHyriStatistics {
             this.currentWinStreak = currentWinStreak;
         }
 
-        public void addCurrentWinStreak(int i) {
+        public void addCurrentWinStreak(long i) {
             this.currentWinStreak += i;
         }
 
-        public void addWins(int i) {
+        public void addWins(long i) {
             this.totalWins += i;
+        }
+
+        public void addPlayedGame() {
+            this.playedGames++;
+        }
+
+        public void addPlayedGames(long playedGames) {
+            this.playedGames = playedGames;
         }
 
         public long getKills() {
@@ -130,6 +154,10 @@ public class LGPlayerStatistics implements IHyriStatistics {
             return this.currentWinStreak;
         }
 
+        public long getPlayedGames() {
+            return playedGames;
+        }
+
         @Override
         public void save(MongoDocument document) {
             document.append("kills", this.kills);
@@ -150,6 +178,14 @@ public class LGPlayerStatistics implements IHyriStatistics {
             this.bestKillStreak = document.getLong("bestKillStreak");
             this.bestWinStreak = document.getLong("bestWinStreak");
             this.currentWinStreak = document.getLong("currentWinStreak");
+        }
+
+        public void addBestWinStreak(long bestWinStreak) {
+            this.bestWinStreak += bestWinStreak;
+        }
+
+        public long getDefeats() {
+            return this.playedGames - this.totalWins;
         }
     }
 }
