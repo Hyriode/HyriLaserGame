@@ -20,7 +20,7 @@ public class LGWaitingRoom extends HyriWaitingRoom {
     public LGWaitingRoom(LGGame game, Supplier<LGConfiguration> configuration) {
         super(game, Material.IRON_HOE, () -> configuration.get().getWaitingRoom());
 
-        this.addLeaderboard(new Leaderboard(NetworkLeveling.LEADERBOARD_TYPE, "bedwars-experience",
+        this.addLeaderboard(new Leaderboard(NetworkLeveling.LEADERBOARD_TYPE, "lasergame-experience",
                 player -> HyriLanguageMessage.get("leaderboard.experience.display").getValue(player))
                 .withScopes(HyriLeaderboardScope.DAILY, HyriLeaderboardScope.WEEKLY, HyriLeaderboardScope.MONTHLY));
         this.addLeaderboard(new Leaderboard(HyriLaserGame.ID, "kills", player -> HyriLanguageMessage.get("leaderboard.kills.display").getValue(player)));

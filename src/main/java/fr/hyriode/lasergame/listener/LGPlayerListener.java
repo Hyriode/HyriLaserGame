@@ -50,13 +50,8 @@ public class LGPlayerListener extends HyriListener<HyriLaserGame> {
         if(gamePlayer == null) return;
 
         if(game.getState() == HyriGameState.PLAYING && player.getLocation().getY() < 10){
-            player.teleport(this.plugin.getConfiguration().getTeam(gamePlayer.getTeam().getName()).getSpawnLocation());
-            return;
+            player.teleport(this.plugin.getConfiguration().getTeam(gamePlayer.getTeam().getName()).getSpawnCloseDoorLocation());
         }
-//        Location spawn = this.plugin.getConfiguration().getWaitingRoom().getSpawn().asBukkit();
-//        if((game.getState() == HyriGameState.WAITING || game.getState() == HyriGameState.READY) && player.getLocation().getY() < spawn.getBlockY() - 15){
-//            player.teleport(spawn);
-//        }
     }
 
     @EventHandler

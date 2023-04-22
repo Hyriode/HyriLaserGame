@@ -82,17 +82,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 .forEach(location -> Bukkit.getScheduler().runTaskLater(this.plugin, () -> LGBonusEntity.spawn(location, this.plugin), 20));
 
         for (LGGamePlayer player : this.players) {
-            Player p = player.getPlayer();
-            final LGScoreboard scoreboard = new LGScoreboard(this.plugin, p);
-
-            player.setScoreboard(scoreboard);
-            scoreboard.show();
-
-            p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
-
-            player.cleanPlayer();
-            player.giveGun();
-            player.giveArmor();
+            player.spawn();
         }
 
         this.getLGTeams().forEach(LGGameTeam::teleportToSpawn);
@@ -106,9 +96,11 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                     return;
                 }
                 if(i >= 0){
-                    players.forEach(p -> {
+                    getOnlinePlayers().forEach(p -> {
                         Player player = p.getPlayer();
-                        if(player == null) return;
+                        if(player == null || !player.isOnline()) {
+                            return;
+                        }
                         String text = ChatColor.AQUA + "" + i;
                         String msg = ChatColor.DARK_AQUA + HyriLanguageMessage.get("game.starting-in").getValue(player) + " ";
                         String secondsText = HyriLanguageMessage.get("game.seconds").getValue(player);
@@ -206,7 +198,9 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     public void handleLogin(Player p) {
         super.handleLogin(p);
 
-        p.teleport(this.plugin.getConfiguration().getWaitingRoom().getSpawn().asBukkit());
+        if(this.getState() == HyriGameState.WAITING || this.getState() == HyriGameState.READY) {
+            p.teleport(this.plugin.getConfiguration().getWaitingRoom().getSpawn().asBukkit());
+        }
         Function<Location, String> t = (loc) -> {
             return "x: " + loc.getBlockX() + " y: " + loc.getBlockY() + " z: " + loc.getBlockZ();
         };
@@ -235,7 +229,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
                 this.win(this.getAdverseTeam(lgPlayer.getTeam()));
             } else {
                 for (HyriGameTeam team : this.teams) {
-                    if (team.getPlayers().size() <= 0) {
+                    if (team.getOnlinePlayers().size() <= 0) {
                         this.win(this.getAdverseTeam(lgPlayer.getTeam()));
                     }
                 }
@@ -306,7 +300,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
             final IHyriLeaderboardProvider provider = HyriAPI.get().getLeaderboardProvider();
 
-            provider.getLeaderboard(NetworkLeveling.LEADERBOARD_TYPE, "bedwars-experience").incrementScore(playerId, xp);
+            provider.getLeaderboard(NetworkLeveling.LEADERBOARD_TYPE, "lasergame-experience").incrementScore(playerId, xp);
             provider.getLeaderboard(HyriLaserGame.ID, "kills").incrementScore(playerId, kills);
             provider.getLeaderboard(HyriLaserGame.ID, "points").incrementScore(playerId, gamePlayer.getTotalPoints());
 

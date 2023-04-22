@@ -39,6 +39,7 @@
   "scoreboard.points.display": "Points",
   "scoreboard.bonus.display": "Bonus",
   "scoreboard.team.display": "Team",
+  "scoreboard.no-team.display": "§bNo Team",
 
   "map.title.victory": "VICTORY",
   "map.title.defeat": "DEFEAT",

@@ -7,7 +7,9 @@ import fr.hyriode.hyrame.game.scoreboard.IPLine;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.lasergame.HyriLaserGame;
+import fr.hyriode.lasergame.game.ELGGameTeam;
 import fr.hyriode.lasergame.game.LGGame;
+import fr.hyriode.lasergame.game.LGGameTeam;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,21 +28,37 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
         this.plugin = plugin;
         this.timeSecond = 300;
 
-        this.setLine(0, this.getDateLine(), scoreboardLine -> scoreboardLine.setValue(this.getDateLine()), 20);
-        this.addBlankLine(1);
-        this.setLine(2, this.getTeamLine());
-        this.setLine(3, this.getTimeLine(), line -> line.setValue(this.getTimeLine()), 20);
-        this.setLine(4, this.getBonusLine(), line -> line.setValue(this.getBonusLine()), 1);
-        this.addBlankLine(5);
-        this.setLine(6, this.getPointsLine(), line -> line.setValue(this.getPointsLine()), 2);
-        this.setLine(7, this.getPointsAdverseLine(), line -> line.setValue(this.getPointsAdverseLine()), 2);
-        this.setLine(8, "    ");
-        this.setLine(9, ChatColor.DARK_AQUA + "hyriode.fr", new IPLine("hyriode.fr"), 2);
+        int i = 0;
+        this.setLine(i++, this.getDateLine(), scoreboardLine -> scoreboardLine.setValue(this.getDateLine()), 20);
+        this.addBlankLine(i++);
+        this.setLine(i++, this.getTeamLine());
+        if(this.getPlayerGame() != null) {
+            this.setLine(i++, this.getTimeLine(), line -> line.setValue(this.getTimeLine()), 20);
+            this.setLine(i++, this.getBonusLine(), line -> line.setValue(this.getBonusLine()), 1);
+            this.addBlankLine(i++);
+            this.setLine(i++, this.getPointsLine(), line -> line.setValue(this.getPointsLine()), 2);
+            this.setLine(i++, this.getPointsAdverseLine(), line -> line.setValue(this.getPointsAdverseLine()), 2);
+        } else {
+            HyriGameTeam redTeam = this.game.getTeam(ELGGameTeam.RED.getName());
+            HyriGameTeam blueTeam = this.game.getTeam(ELGGameTeam.BLUE.getName());
+
+            this.addBlankLine(i++);
+            this.setLine(i++, this.getPointsLine(redTeam), line -> line.setValue(this.getPointsLine(redTeam)), 2);
+            this.setLine(i++, this.getPointsLine(blueTeam), line -> line.setValue(this.getPointsLine(blueTeam)), 2);
+        }
+        this.addBlankLine(i++);
+        this.setLine(i, ChatColor.DARK_AQUA + "hyriode.fr", new IPLine("hyriode.fr"), 2);
     }
 
     private String getTeamLine(){
-        HyriGameTeam team = this.getPlayerGame().getTeam();
-        return ChatColor.WHITE + this.getLinePrefix("team") + ": " + team.getColor().getChatColor() + team.getDisplayName().getValue(this.getPlayer());
+        LGGamePlayer player = this.getPlayerGame();
+        if(player != null) {
+            HyriGameTeam team = player.getTeam();
+            if(team != null) {
+                return ChatColor.WHITE + this.getLinePrefix("team") + ": " + team.getColor().getChatColor() + team.getDisplayName().getValue(this.getPlayer());
+            }
+        }
+        return ChatColor.WHITE + this.getLinePrefix("team") + ": " + this.getLinePrefix("no-team");
     }
 
     private String getPointsLine(){
@@ -51,6 +69,10 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
     private String getPointsAdverseLine(){
         HyriGameTeam team = this.game.getAdverseTeam(this.getPlayerGame().getTeam());
         return team.getColor().getChatColor() + team.getDisplayName().getValue(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team);
+    }
+
+    private String getPointsLine(HyriGameTeam team){
+        return team.getColor().getChatColor() + team.getDisplayName().getValue(this.player) + ": " + ChatColor.WHITE + this.game.getTeamPoints(team) + " ";
     }
 
     private String getBonusLine(){

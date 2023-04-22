@@ -67,7 +67,7 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     public void kill(LGGamePlayer killer){
-        if(player == null) return;
+        if(player == null || !player.isOnline()) return;
         int timeDeath = 5;
         this.giveDeathArmor();
         this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * timeDeath, 1, true, true), true);
@@ -137,7 +137,7 @@ public class LGGamePlayer extends HyriGamePlayer {
     }
 
     private void giveArmor(Color color){
-        if(player == null) return;
+        if(player == null || !player.isOnline()) return;
         this.player.getInventory().setHelmet(
                 new ItemBuilder(Material.LEATHER_HELMET)
                         .withLeatherArmorColor(color)
@@ -339,5 +339,17 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     public LGPlayerStatistics.Data getAllStatistics() {
         return this.getStatistics().getAllData();
+    }
+
+    public void spawn() {
+        final LGScoreboard scoreboard = new LGScoreboard(this.plugin, this.getPlayer());
+
+        this.setScoreboard(scoreboard);
+        scoreboard.show();
+
+        this.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999*20, 0));
+        this.cleanPlayer();
+        this.giveGun();
+        this.giveArmor();
     }
 }

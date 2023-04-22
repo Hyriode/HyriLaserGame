@@ -41,7 +41,12 @@ public class LGGameListener extends HyriListener<HyriLaserGame> {
         final LGGamePlayer player = (LGGamePlayer) event.getGamePlayer();
         player.getPlayer().getInventory().clear();
 
-        player.respawn();
+        if(this.plugin.getGame().isDoorOpen()) {
+            player.getPlayer().teleport(((LGGameTeam) player.getTeam()).getConfig().getSpawnCloseDoorLocation());
+        } else {
+            player.getPlayer().teleport(((LGGameTeam) player.getTeam()).getConfig().getSpawnLocation());
+        }
+        player.spawn();
     }
 
     @HyriEventHandler

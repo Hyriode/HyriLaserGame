@@ -23,6 +23,10 @@ public class LGGameTeam extends HyriGameTeam {
 
     }
 
+    public LGConfiguration.Team getConfig() {
+        return this.plugin.getConfiguration().getTeam(this.getName());
+    }
+
     public void teleportToSpawn() {
         this.teleport(this.plugin.getConfiguration().getTeam(this.getName()).getSpawnLocation().add(0, 1, 0));
     }
