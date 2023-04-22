@@ -123,7 +123,7 @@ public class LGPlayerStatistics implements IHyriStatistics {
         }
 
         public void addPlayedGames(long playedGames) {
-            this.playedGames = playedGames;
+            this.playedGames += playedGames;
         }
 
         public long getKills() {
