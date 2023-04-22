@@ -77,7 +77,7 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
 
     private String getBonusLine(){
         if(this.plugin.getGame().getState() == HyriGameState.ENDED)
-            return ChatColor.WHITE + this.getLinePrefix("points") + ": " + ChatColor.AQUA + this.plugin.getGame().getTeamPoints(this.plugin.getGame().getWinner());
+            return ChatColor.WHITE + this.getLinePrefix("points") + ": " + ChatColor.AQUA + this.plugin.getGame().getTeamPoints(this.plugin.getGame().getReelWinner());
         return ChatColor.WHITE + this.getLinePrefix("bonus") + ": " + ChatColor.AQUA + (this.getPlayerGame().hasBonus() ? this.getPlayerGame().getBonus().getLanguageName().getValue(player.getPlayer()) : HyriLanguageMessage.get("bonus.unknown").getValue(this.player));
     }
 
@@ -101,7 +101,7 @@ public class LGScoreboard extends HyriGameScoreboard<LGGame> {
         if(this.plugin.getGame().getState() != HyriGameState.ENDED && !this.plugin.getGame().isFinalKill())
             return ChatColor.WHITE + this.getLinePrefix("time") + ChatColor.AQUA + (min + "m" + sec + "s");
         else if(this.plugin.getGame().getState() == HyriGameState.ENDED) {
-            HyriGameTeam team = this.plugin.getGame().getWinner();
+            HyriGameTeam team = this.plugin.getGame().getReelWinner();
             return ChatColor.WHITE + this.getLinePrefix("winner") + team.getColor().getChatColor() + team.getDisplayName().getValue(player.getPlayer());
         }else
             return ChatColor.WHITE + this.getLinePrefix("time") + ChatColor.AQUA + this.getLinePrefix("suddendeath");

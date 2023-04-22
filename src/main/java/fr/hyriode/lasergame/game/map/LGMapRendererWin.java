@@ -25,7 +25,7 @@ public class LGMapRendererWin extends MapRenderer {
     public void render(MapView mapView, MapCanvas mapCanvas, Player player) {
         if(!hasRendered) {
             final LGGamePlayer lgPlayer = this.plugin.getGame().getPlayer(player.getUniqueId());
-            final HyriGameTeam winner = this.plugin.getGame().getWinner();
+            final HyriGameTeam winner = this.plugin.getGame().getReelWinner();
             final HyriGameTeam looser = this.plugin.getGame().getLooser();
             final boolean win = winner.contains(lgPlayer);
 

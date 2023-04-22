@@ -49,6 +49,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     private boolean doorOpen;
     private boolean finalKill = false;
+    private HyriGameTeam reelWinner;
 
     public LGGame(IHyrame hyrame, HyriLaserGame plugin) {
         super(hyrame, plugin, HyriAPI.get().getConfig().isDevEnvironment()
@@ -240,6 +241,7 @@ public class LGGame extends HyriGame<LGGamePlayer> {
     @Override
     public void win(HyriGameTeam winner) {
         super.win(winner);
+        this.reelWinner = winner;
 
 //        for (LGGamePlayer player : this.getOnlinePlayers()) {
 //            this.giveResultMap(player.getPlayer());
@@ -333,6 +335,10 @@ public class LGGame extends HyriGame<LGGamePlayer> {
 
     public boolean hasSamePoints(){
         return this.getTeamPoints(this.getWinner()) == this.getTeamPoints(this.getLooser());
+    }
+
+    public HyriGameTeam getReelWinner() {
+        return reelWinner;
     }
 
     public HyriGameTeam getWinner(boolean isWinner){
