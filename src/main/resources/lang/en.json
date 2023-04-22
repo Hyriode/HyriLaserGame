@@ -65,7 +65,7 @@
   "bonus.pickup.description": "Description: ",
   "bonus.pickup.already": "You already have a bonus!",
 
-  "bonus.unknown": "Unknown",
+  "bonus.unknown": "None",
 
   "damage.death.shield_fell": "Your shield is broken (You fell)",
   "damage.death.fell": "+1 Death (You fell)",
