@@ -27,6 +27,7 @@ public class SphereEffect {
     private final LGGamePlayer player;
     private final HyriLaserGame plugin;
     private BukkitTask timer;
+    int timerLimit = 40;
 
     public SphereEffect(HyriLaserGame plugin, LGGamePlayer player) {
         this.plugin = plugin;
@@ -36,6 +37,10 @@ public class SphereEffect {
     public void start() {
         LGGame game = this.plugin.getGame();
         this.timer = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> {
+            if(this.timerLimit-- <= 0) {
+                this.stop();
+                return;
+            }
             Player owner = this.player == null ? null : this.player.getPlayer();
             if(owner == null || this.player.getPlayer().isDead()) {
                 this.stop();
