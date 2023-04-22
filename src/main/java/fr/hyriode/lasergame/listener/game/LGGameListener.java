@@ -2,6 +2,8 @@ package fr.hyriode.lasergame.listener.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.actionbar.ActionBar;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
@@ -46,6 +48,7 @@ public class LGGameListener extends HyriListener<HyriLaserGame> {
         } else {
             player.getPlayer().teleport(((LGGameTeam) player.getTeam()).getConfig().getSpawnLocation());
         }
+        player.dead();
         player.spawn();
     }
 

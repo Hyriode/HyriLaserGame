@@ -47,6 +47,8 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     private int killStreak;
 
+    private final static int TIME_DEATH = 5;
+
     public LGGamePlayer(Player player) {
         super(player);
     }
@@ -68,9 +70,15 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     public void kill(LGGamePlayer killer){
         if(player == null || !player.isOnline()) return;
-        int timeDeath = 5;
+        this.dead();
+        BroadcastUtil.broadcast(p -> HyriLanguageMessage.get("player.death.chat").getValue(p)
+                .replace("%victim%", this.getTeam().getColor().getChatColor() + this.player.getName())
+                .replace("%killer%", killer.getTeam().getColor().getChatColor() + killer.getPlayer().getName()));
+    }
+
+    public void dead() {
         this.giveDeathArmor();
-        this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * timeDeath, 1, true, true), true);
+        this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * TIME_DEATH, 1, true, true), true);
         this.player.playSound(this.player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
         this.setDead(HyriGameDeathEvent.Reason.PLAYERS, new ArrayList<>());
 
@@ -79,7 +87,7 @@ public class LGGamePlayer extends HyriGamePlayer {
                 .addValue(HyriLanguage.FR, "MORT");
 
         new BukkitRunnable(){
-            int i = timeDeath;
+            int i = TIME_DEATH;
             @Override
             public void run() {
                 if(plugin.getGame().getState() != HyriGameState.ENDED) {
@@ -95,17 +103,13 @@ public class LGGamePlayer extends HyriGamePlayer {
             }
         }.runTaskTimer(this.plugin, 0L, 20L);
 
-        BroadcastUtil.broadcast(p -> HyriLanguageMessage.get("player.death.chat").getValue(p)
-                .replace("%victim%", this.getTeam().getColor().getChatColor() + this.player.getName())
-                .replace("%killer%", killer.getTeam().getColor().getChatColor() + killer.getPlayer().getName()));
-
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             if(this.plugin.getGame().getState() != HyriGameState.ENDED) {
                 this.setNotDead();
                 this.playReviveSound(player);
                 this.giveArmor();
             }
-        }, 20L * timeDeath);
+        }, 20L * TIME_DEATH);
     }
 
     public void playReviveSound(final Player player) {
@@ -114,12 +118,6 @@ public class LGGamePlayer extends HyriGamePlayer {
             int ticks = i * 3;
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> player.playSound(player.getLocation(), Sound.DRINK, 1, volume), ticks);
         }
-    }
-
-    public void respawn() {
-        new ActionBar(HyriLanguageMessage.get("player.death.subtitle.good").getValue(player)).send(player);
-        this.giveArmor();
-        this.setNotDead();
     }
 
     public void giveArmor(){
