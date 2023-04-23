@@ -116,7 +116,16 @@ public class LGGamePlayer extends HyriGamePlayer {
         for (int i = 0; i < 5; i++) {
             float volume = 0.5F + i * 0.2F;
             int ticks = i * 3;
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> player.playSound(player.getLocation(), Sound.DRINK, 1, volume), ticks);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if(player == null || !player.isOnline()) {
+                        this.cancel();
+                        return;
+                    }
+                    player.playSound(player.getLocation(), Sound.DRINK, 1, volume);
+                }
+            }.runTaskLater(this.plugin, ticks);
         }
     }
 
