@@ -167,6 +167,7 @@ public class LGPlayerStatistics implements IHyriStatistics {
             document.append("bestKillStreak", this.bestKillStreak);
             document.append("bestWinStreak", this.bestWinStreak);
             document.append("currentWinStreak", this.currentWinStreak);
+            document.append("playedGames", this.playedGames);
         }
 
         @Override
@@ -178,6 +179,7 @@ public class LGPlayerStatistics implements IHyriStatistics {
             this.bestKillStreak = document.getLong("bestKillStreak");
             this.bestWinStreak = document.getLong("bestWinStreak");
             this.currentWinStreak = document.getLong("currentWinStreak");
+            this.playedGames = document.getLong("playedGames");
         }
 
         public void addBestWinStreak(long bestWinStreak) {
