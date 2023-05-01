@@ -23,6 +23,7 @@ import fr.hyriode.lasergame.game.item.LGLaserGun;
 import fr.hyriode.lasergame.game.map.LGMapRendererWin;
 import fr.hyriode.lasergame.game.player.LGGamePlayer;
 import fr.hyriode.lasergame.game.scoreboard.LGScoreboard;
+import fr.hyriode.lasergame.game.teleport.LGMapChunk;
 import net.minecraft.server.v1_8_R3.EntityFallingBlock;
 import org.bukkit.*;
 import org.bukkit.block.Block;

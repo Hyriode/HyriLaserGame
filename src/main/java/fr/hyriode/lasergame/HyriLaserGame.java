@@ -10,6 +10,11 @@ import fr.hyriode.hyrame.utils.AreaWrapper;
 import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.lasergame.configuration.LGConfiguration;
 import fr.hyriode.lasergame.game.LGGame;
+import fr.hyriode.lasergame.game.teleport.LGMapChunk;
+import fr.hyriode.lasergame.utils.ConfigUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.imageio.ImageIO;
@@ -17,8 +22,10 @@ import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.logging.Level;
 
 public class HyriLaserGame extends JavaPlugin {
@@ -39,62 +46,7 @@ public class HyriLaserGame extends JavaPlugin {
         if(!HyriAPI.get().getConfig().isDevEnvironment()){
             this.configuration = HyriAPI.get().getServer().getConfig(LGConfiguration.class);
         } else {
-            HyriWaitingRoom.Config wr = new HyriWaitingRoom.Config(
-                    new LocationWrapper(-0.5, 160, -1000.5, -90, 0),
-                    new LocationWrapper(21, 175, -1016),
-                    new LocationWrapper(-15, 159, -985),
-                    new LocationWrapper(-4.5, 160, -1000.5, 0, 0));
-            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "lasergame-experience", new LocationWrapper(-5.5, 189, -12.5)));
-            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "kills", new LocationWrapper(-1.5, 189, -6.5)));
-            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "victories", new LocationWrapper(-1.5, 189, 7.5)));
-            wr.addLeaderboard(new HyriWaitingRoom.Config.Leaderboard(HyriLaserGame.ID, "points", new LocationWrapper(-5.5, 189, 13.5)));
-
-            this.configuration = new LGConfiguration(Arrays.asList(
-                    new LGConfiguration.Team(
-                            "red",
-                            Arrays.asList(
-                                    new AreaWrapper(
-                                            new LocationWrapper(-60, 146, -6),
-                                            new LocationWrapper(-62, 144, -6)
-                                    ),
-                                    new AreaWrapper(
-                                            new LocationWrapper(-60, 146, 8),
-                                            new LocationWrapper(-62, 144, 8)
-                                    )
-                            ),
-                            new AreaWrapper(
-                                    new LocationWrapper(-63, 147, -6),
-                                    new LocationWrapper(-51, 143, 8)
-                            ),
-                            new LocationWrapper(-53.5, 146, 1.5, 90, 0), //spawn loc
-                            new LocationWrapper(-48.5, 146, 1.5, -90, 0) //spawn close
-                      ),
-                    new LGConfiguration.Team(
-                            "blue",
-                            Arrays.asList(
-                                    new AreaWrapper(
-                                            new LocationWrapper(52, 146, -6),
-                                            new LocationWrapper(54, 144, -6)
-                                    ),
-                                    new AreaWrapper(
-                                            new LocationWrapper(54, 146, 8),
-                                            new LocationWrapper(52, 144, 8)
-                                    )
-                            ), //doors
-                            new AreaWrapper(
-                                    new LocationWrapper(54, 147, 8), //area
-                                    new LocationWrapper(43, 143, -6)
-                            ),
-                            new LocationWrapper(46.5, 146, 1.5, -90, 0), //spawn loc
-                            new LocationWrapper(41.5, 146, 1.5, 90, 0) //spawn close
-                    )
-            ), wr, Arrays.asList(
-                    new LocationWrapper(-3.5, 145, -3.5),
-                    new LocationWrapper(-3.5, 145, 6.5),
-                    new LocationWrapper(-3.5, 150, 1.5),
-                    new LocationWrapper(-3.5, 145, 20.5),
-                    new LocationWrapper(-3.5, 145, -17.5)
-            ));
+            this.configuration = ConfigUtil.getNexus();
         }
 
         this.hyrame = HyrameLoader.load(new LGProvider(this));
@@ -110,7 +62,33 @@ public class HyriLaserGame extends JavaPlugin {
             e.printStackTrace();
         }
 
+        this.loadChunks();
+
         HyriAPI.get().getServer().setState(HyggServer.State.READY);
+    }
+
+    public void loadChunks() {
+        Location location = this.getConfiguration().getTeams().get(0).getSpawnLocation();
+        List<LGMapChunk> chunks = this.getChunksAround(location.getChunk(), Bukkit.getViewDistance());
+
+        for (LGMapChunk chunk : chunks) {
+            chunk.asBukkit(IHyrame.WORLD.get()).load(false);
+        }
+    }
+
+    private List<LGMapChunk> getChunksAround(Chunk origin, int radius) {
+        final int length = (radius * 2) + 1;
+        final List<LGMapChunk> chunks = new ArrayList<>(length * length);
+
+        final int cX = origin.getX();
+        final int cZ = origin.getZ();
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                chunks.add(new LGMapChunk(cX + x, cZ + z));
+            }
+        }
+        return chunks;
     }
 
     @Override
