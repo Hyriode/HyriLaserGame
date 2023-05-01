@@ -78,7 +78,7 @@ public class LGGamePlayer extends HyriGamePlayer {
 
     public void dead() {
         this.giveDeathArmor();
-        this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * TIME_DEATH, 1, true, true), true);
+        this.player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * TIME_DEATH, 2, true, true), true);
         this.player.playSound(this.player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
         this.setDead(HyriGameDeathEvent.Reason.PLAYERS, new ArrayList<>());
 
